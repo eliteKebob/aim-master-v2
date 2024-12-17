@@ -7,10 +7,11 @@ const SingleTarget = ({
   setScore,
   score,
   theme,
+  gameOver
 }) => {
   let targetRef = useRef();
   const handleHover = () => {
-    if (gameRunning) {
+    if (gameRunning && !gameOver) {
       stylist();
       setScore(score + 1);
     } else {

@@ -59,7 +59,6 @@ h1 {
   color: black;
   font-weight: 700;
   font-size: 3vh;
-  width: 5vw;
   padding: 1vh 1vh;
   margin-left: 1vw;
 }
@@ -80,18 +79,25 @@ h1 {
 
 .start-game {
   margin-top: 3vh;
-  width: 30vw;
   justify-content: space-between;
+  gap: 3vw;
 }
 
 .sg-btn {
-  width: 12vw;
+  min-width: 12vw;
   border-radius: 1vw;
   height: 10vh;
   cursor: pointer;
   font-size: 3vh;
   font-weight: 700;
   color: black;
+  padding: 0 1vw;
+  transition: 0.2s ease-in-out;
+  box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,0);
+}
+
+.sg-btn:hover {
+  box-shadow: inset 0px 0px 3px 2px rgba(0,0,0,0.61);
 }
 
 .cam-text {
@@ -215,6 +221,7 @@ h1 {
   right: 0;
   background: rgba(0, 0, 0, 0.7);
   z-index: 1;
+  transition: opacity .2s ease-in-out;
 }
 
 .challenge-btn svg {

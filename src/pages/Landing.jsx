@@ -43,7 +43,6 @@ const Landing = ({
 
   const challengeBtnStyles = {
     backgroundColor: theme,
-    transition: "opacity 0.2s ease-in-out",
     position: "relative",
   };
 
@@ -63,8 +62,8 @@ const Landing = ({
         <div
           className="st-example"
           style={{
-            width: `${targetSize}vh`,
-            height: `${targetSize}vh`,
+            width: `${targetSize === 1 ? 0.5 : targetSize - 1}vh`,
+            height: `${targetSize === 1 ? 0.5 : targetSize - 1}vh`,
             backgroundColor: theme,
           }}
         ></div>

@@ -18,13 +18,13 @@ const Game = ({
   setGameRunning,
   setShowMemberForm,
 }) => {
-  const [targetsArr, setTargetsArr] = useState([0, 1, 2, 3, 4, 5, 6]);
+  const [targetsArr, setTargetsArr] = useState([0, 1, 2, 3, 4, 5, 6]); // default 7 targets
   const [secs, setSecs] = useState(5);
   const [now, setNow] = useState(0);
   const [spm, setSpm] = useState(0);
 
-  const SECONDS_PER_GAME = 30;
-  const MILLISECONDS_PER_GAME = 30000;
+  const SECONDS_PER_GAME = 5;
+  const MILLISECONDS_PER_GAME = SECONDS_PER_GAME * 1000;
 
   useEffect(() => {
     setShowMemberForm(false);
@@ -53,14 +53,14 @@ const Game = ({
   useEffect(() => {
     let countDownDate = startTime + MILLISECONDS_PER_GAME;
     let distance = countDownDate - now;
-    setSecs(Math.floor((distance % (MILLISECONDS_PER_GAME)) / 1000));
+    setSecs(Math.floor((distance % MILLISECONDS_PER_GAME) / 1000));
     // eslint-disable-next-line
   }, [now]);
 
   useEffect(() => {
     if (isChallenge === true) {
       if (secs > 0) {
-        setSpm(Math.floor((score / (SECONDS_PER_GAME - secs)) * 60));
+        setSpm(Math.floor((score / (SECONDS_PER_GAME + 1 - secs)) * 60));
       } else {
         setSpm(0);
         return;
@@ -89,9 +89,9 @@ const Game = ({
         </div>
         {isChallenge ? (
           <>
-            {secs > 0 ? (
+            {secs >= 0 ? (
               <div className="countdown flex-center-center">
-                <FaClock /> {secs}s
+                <FaClock /> {secs + 1 > SECONDS_PER_GAME ? SECONDS_PER_GAME : secs + 1}s
               </div>
             ) : (
               ""
@@ -116,6 +116,7 @@ const Game = ({
           setSpm={setSpm}
           setStartTime={setStartTime}
           setGameRunning={setGameRunning}
+          gameLength={SECONDS_PER_GAME}
         />
       ) : (
         <>
@@ -128,6 +129,7 @@ const Game = ({
               score={score}
               gameRunning={gameRunning}
               theme={theme}
+              gameOver={gameOver}
             />
           ))}
         </>

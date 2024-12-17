@@ -4,6 +4,7 @@ import {
   FaRedo,
   FaHome,
   FaAward,
+  FaCog,
 } from "react-icons/fa";
 import { useEffect, useState, createRef, useRef } from "react";
 import Logo from "../assets/logo.png";
@@ -11,6 +12,7 @@ import { useScreenshot } from "use-react-screenshot";
 import { useNavigate } from "react-router-dom";
 import autoAnimate from "@formkit/auto-animate";
 import { SCORES } from "../constants/scores";
+import { postScore } from "../requests/score";
 
 const GameOver = ({
   setGameOver,
@@ -23,6 +25,7 @@ const GameOver = ({
   setSpm,
   setStartTime,
   setGameRunning,
+  gameLength,
 }) => {
   const parentRef = useRef();
   const resultRef = createRef(null);
@@ -31,7 +34,7 @@ const GameOver = ({
     name: "Generic Grade",
     message: "Generic Grade Message",
   });
-  const [tzOffset, setTzOffset] = useState(0);
+  const [opacity, setOpacity] = useState(0)
   const [image, takeScreenshot] = useScreenshot();
 
   const navigate = useNavigate();
@@ -41,7 +44,7 @@ const GameOver = ({
   const handleRetry = () => {
     setGameOver(false);
     setScore(0);
-    setSecs(60);
+    setSecs(gameLength);
     setSpm(0);
     setGrade("");
     setStartTime(new Date().getTime());
@@ -49,7 +52,7 @@ const GameOver = ({
 
   const handleHome = () => {
     setScore(0);
-    setSecs(60);
+    setSecs(gameLength);
     setSpm(0);
     setGrade("");
     setStartTime("");
@@ -71,9 +74,23 @@ const GameOver = ({
   };
 
   useEffect(() => {
-    let finalResult = score / (targets + targetSize);
+    let finalResult = (score * (60 / gameLength)) / (targets + targetSize);
     setGrade(gradeGetter(Math.round(finalResult)));
-    setTzOffset(-(new Date().getTimezoneOffset() / 60));
+    const _request = async () => {
+      await postScore({
+        tz_offset: -(new Date().getTimezoneOffset() / 60),
+        game_length: gameLength,
+        target_size: targetSize,
+        total_target: targets,
+        target_hit: score,
+        mode: "C", // "C" for challenge, "CH" for chill
+      });
+    };
+    _request();
+    const op = setTimeout(() => {
+      setOpacity(1);
+    }, 300);
+    // clearTimeout(op);
     // eslint-disable-next-line
   }, []);
 
@@ -84,7 +101,7 @@ const GameOver = ({
   }, [image, downloadRef]);
 
   return (
-    <div className="game-over-wrapper flex-center-center" ref={parentRef}>
+    <div className="game-over-wrapper flex-center-center" ref={parentRef} style={{opacity: opacity}}>
       <div
         className="go-content flex-center-center"
         style={{ border: `0.5vh solid ${theme}` }}
@@ -98,8 +115,7 @@ const GameOver = ({
               <FaCrosshairs />
               <p>
                 You aimed at target{" "}
-                <span style={{ fontSize: "8vh" }}>{score}</span> times in a
-                minute
+                <span style={{ fontSize: "8vh" }}>{score}</span> times
               </p>
             </div>
             <div
@@ -118,7 +134,7 @@ const GameOver = ({
             className="settings-group flex-center-center"
             style={{ border: `0.25vh solid ${theme}` }}
           >
-            <h4>Your Settings</h4>
+            <h4 className="flex-center-center" style={{gap:".5vw"}}><FaCog /> Settings</h4>
             <div className="sg-info flex-center-center">
               <p>
                 Target Size:{" "}

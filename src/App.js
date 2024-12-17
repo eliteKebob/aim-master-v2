@@ -31,14 +31,23 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("access") && localStorage.getItem("refresh")) {
       // send get user request
-      setUser({"access": localStorage.getItem("access"), "refresh": localStorage.getItem("refresh")})
+      setUser({
+        access: localStorage.getItem("access"),
+        refresh: localStorage.getItem("refresh"),
+      });
     }
-  }, [])
+  }, []);
 
   return (
     <>
       <BrowserRouter>
-        <Header theme={theme} user={user} setUser={setUser} showMemberForm={showMemberForm} setShowMemberForm={setShowMemberForm} />
+        <Header
+          theme={theme}
+          user={user}
+          setUser={setUser}
+          showMemberForm={showMemberForm}
+          setShowMemberForm={setShowMemberForm}
+        />
         <Routes>
           <Route
             path="/"
