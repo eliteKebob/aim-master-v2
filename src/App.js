@@ -4,6 +4,8 @@ import Header from "./components/Header";
 import Game from "./pages/Game";
 import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
+import { postScore } from "./requests/score";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 function App() {
   const [score, setScore] = useState(0);
@@ -38,6 +40,22 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!gameRunning && user) {
+      if (localStorage.getItem("chill")) {
+        const clearGame = () => {
+          localStorage.removeItem("chill");
+        };
+        const _request = async () => {
+          await postScore(JSON.parse(localStorage.getItem("chill")), clearGame);
+        };
+        _request();
+      }
+    }
+    // eslint-disable-next-line
+  }, [gameRunning])
+  
+
   return (
     <>
       <BrowserRouter>
@@ -47,6 +65,7 @@ function App() {
           setUser={setUser}
           showMemberForm={showMemberForm}
           setShowMemberForm={setShowMemberForm}
+          setGameRunning={setGameRunning}
         />
         <Routes>
           <Route
@@ -89,10 +108,18 @@ function App() {
                 gameOver={gameOver}
                 setGameOver={setGameOver}
                 setShowMemberForm={setShowMemberForm}
+                user={user}
               />
             }
           />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute user={user}>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

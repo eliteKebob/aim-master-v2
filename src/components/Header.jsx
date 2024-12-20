@@ -11,7 +11,14 @@ import { useRef, useEffect } from "react";
 import Login from "./Login";
 import { logout } from "../requests/user";
 
-const Header = ({ theme, user, setUser, setShowMemberForm, showMemberForm }) => {
+const Header = ({
+  theme,
+  user,
+  setUser,
+  setShowMemberForm,
+  showMemberForm,
+  setGameRunning,
+}) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -21,6 +28,7 @@ const Header = ({ theme, user, setUser, setShowMemberForm, showMemberForm }) => 
       e.preventDefault();
       e.stopPropagation();
     } else {
+      setGameRunning(false);
       navigate("/profile");
     }
   };
@@ -31,12 +39,20 @@ const Header = ({ theme, user, setUser, setShowMemberForm, showMemberForm }) => 
   };
 
   const handleLogout = async () => {
-    await logout({ refresh: localStorage.getItem("refresh") }, setUser);
+    const callback = () => {
+      localStorage.clear();
+      setUser(null);
+      navigate("/");
+    };
+    await logout({ refresh: localStorage.getItem("refresh") }, callback);
   };
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      if (!event.target.classList.contains("fa-user-circle") && !event.target.parentElement.classList.contains("fa-user-circle")) {
+      if (
+        !event.target?.classList.contains("fa-user-circle") &&
+        !event.target.parentElement?.classList.contains("fa-user-circle")
+      ) {
         setShowMemberForm(false);
       }
     }
@@ -56,19 +72,28 @@ const Header = ({ theme, user, setUser, setShowMemberForm, showMemberForm }) => 
         className="header flex-center-center"
         style={{ backgroundColor: theme }}
       >
-        <div className="brand flex-center-center" onClick={() => navigate("/")}>
+        <div
+          className="brand flex-center-center"
+          onClick={() => {
+            navigate("/");
+            setGameRunning(false);
+          }}
+        >
           <h1>AIM</h1>
           <img src={Logo} alt="" />
           <h1>MASTER</h1>
         </div>
         <div className="links flex-center-center">
           {window.location.pathname !== "/" && (
-            <Link to="/">
+            <Link to="/" onClick={() => setGameRunning(false)}>
               <FaHome />
             </Link>
           )}
-          <Link to="/profile" >
-            <FaUserCircle onClick={(e) => handleClick(e)} className="fa-user-circle" />
+          <Link to="/profile">
+            <FaUserCircle
+              onClick={(e) => handleClick(e)}
+              className="fa-user-circle"
+            />
           </Link>
           <div style={loginWrapperStyle} ref={dropdownRef}>
             <Login
@@ -91,7 +116,12 @@ const Header = ({ theme, user, setUser, setShowMemberForm, showMemberForm }) => 
           >
             <FaDev />
           </a>
-          {user && <FaSignOutAlt style={{ cursor: "pointer" }} onClick={handleLogout} />}
+          {user && (
+            <FaSignOutAlt
+              style={{ cursor: "pointer" }}
+              onClick={handleLogout}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export const login = async (data, callback) => {
 export const logout = async (data, callback) => {
   const response = await apiClient
     .post("/logout/", data)
-    .then((response) => localStorage.clear(), callback(null))
+    .then((response) => callback())
     .catch((error) => alert("Error when logout!"));
 
   console.log("🚀 Logout request response: ", response);

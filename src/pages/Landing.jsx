@@ -24,8 +24,8 @@ const Landing = ({
       return;
     }
     setGameRunning(true);
-    navigate("/game");
     challenge && setIsChallenge(true);
+    navigate("/game");
   };
 
   const handleTarget = (el, isSize) => {
