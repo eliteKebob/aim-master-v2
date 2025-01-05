@@ -116,7 +116,7 @@ function App() {
             path="/profile"
             element={
               <ProtectedRoute user={user}>
-                <Profile />
+                <Profile theme={theme} />
               </ProtectedRoute>
             }
           />

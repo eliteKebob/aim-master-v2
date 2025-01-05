@@ -7,7 +7,7 @@
   font-family: 'Anybody', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  overflow: hidden scroll;
   transition: background-color 0.2s ease-in-out;
 }
 
@@ -330,4 +330,48 @@ h1 {
 .aimmaster-brand img {
   height: 6vh;
   margin: 0 0.5vw;
+}
+
+.charts {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1vh;
+}
+
+.count-charts {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.count-chart-wrapper {
+  padding: 1vh 0;
+  text-align: center;
+  min-width: 20vw;
+  max-width: 20vw;
+  border-radius: 10px;
+}
+
+.count-chart-wrapper p:nth-child(2) {
+  margin-top: 1vh;
+  font-size: 5vh;
+}
+
+.chart-group  {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40vh;
+  margin: 2vh 0;
+}
+
+.chart-group div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 50%;
 }

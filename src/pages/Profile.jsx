@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { getScores } from "../requests/score";
 import ChartsList from "../components/ChartsList";
 
-const Profile = () => {
+const Profile = ({ theme }) => {
   const [scores, setScores] = useState(null);
 
   useEffect(() => {
     const _request = async () => {
       await getScores(null, setScores);
     };
-    // _request();
+    _request();
     // eslint-disable-next-line
   }, []);
 
@@ -17,7 +17,7 @@ const Profile = () => {
 
   return (
     <div>
-      <ChartsList />
+      <ChartsList scores={scores} theme={theme} />
     </div>
   );
 };
@@ -29,5 +29,7 @@ export default Profile;
 // 1 pie chart:
 // 1 line chart:
 // 1 polar area chart:
+
+
 // 1 radar chart:
 // 1 bubble chart:
