@@ -2,7 +2,7 @@ import axios from "axios";
 import apiClient from "./init";
 
 export const register = async (data) => {
-  const response = await axios.post("/register/", data);
+  const response = await axios.post("/user/register/", data);
   console.log("🚀 register request response: ", response);
   if (response && response.status === 201) {
     alert("Successfully registered!");
@@ -12,7 +12,7 @@ export const register = async (data) => {
 };
 
 export const login = async (data, callback) => {
-  const response = await axios.post("/login/", data);
+  const response = await axios.post("/user/login/", data);
   console.log("🚀 login request response: ", response);
   if (response && response.status === 200) {
     localStorage.setItem("access", response.data.access);
@@ -25,7 +25,7 @@ export const login = async (data, callback) => {
 
 export const logout = async (data, callback) => {
   const response = await apiClient
-    .post("/logout/", data)
+    .post("/user/logout/", data)
     .then((response) => callback())
     .catch((error) => alert("Error when logout!"));
 
