@@ -10,50 +10,59 @@ import {
 import { useRef, useEffect } from "react";
 import Login from "./Login";
 import { logout } from "../requests/user";
+import { Themes } from "../constants/themes";
+import { IAuthResponse } from "../types/auth.types";
 
-const Header = ({
-  theme,
-  user,
-  setUser,
-  setShowMemberForm,
-  showMemberForm,
-  setGameRunning,
-}) => {
+type IHeaderProps = {
+  theme: Themes;
+  setUser: React.Dispatch<React.SetStateAction<IAuthResponse>>;
+  setShowMemberForm: React.Dispatch<React.SetStateAction<boolean>>;
+  showMemberForm: boolean;
+  setGameRunning: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoggedIn: () => boolean;
+};
+
+const Header = (props: IHeaderProps) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  const handleClick = (e) => {
-    if (!user) {
-      setShowMemberForm(!showMemberForm);
-      e.preventDefault();
-      e.stopPropagation();
+  const handleClick = (event: React.MouseEvent<SVGElement>) => {
+    if (!props.isLoggedIn()) {
+      props.setShowMemberForm(!props.showMemberForm);
+      event.preventDefault();
+      event.stopPropagation();
     } else {
-      setGameRunning(false);
+      props.setGameRunning(false);
       navigate("/profile");
     }
   };
 
   const loginWrapperStyle = {
-    opacity: showMemberForm ? "1" : "0",
+    opacity: props.showMemberForm ? "1" : "0",
     transition: "opacity 0.2s ease-in-out",
   };
 
   const handleLogout = async () => {
     const callback = () => {
       localStorage.clear();
-      setUser(null);
+      props.setUser({ access: "", refresh: "" });
       navigate("/");
     };
-    await logout({ refresh: localStorage.getItem("refresh") }, callback);
+    const refresh = localStorage.getItem("refresh");
+    refresh && (await logout({ refresh: refresh }, callback));
   };
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (
+      dropdownRef?.current &&
+      !(dropdownRef.current as Node).contains(target)
+    ) {
       if (
-        !event.target?.classList.contains("fa-user-circle") &&
-        !event.target.parentElement?.classList.contains("fa-user-circle")
+        !target?.classList.contains("fa-user-circle") &&
+        !target?.parentElement?.classList.contains("fa-user-circle")
       ) {
-        setShowMemberForm(false);
+        props.setShowMemberForm(false);
       }
     }
   };
@@ -70,13 +79,13 @@ const Header = ({
     <div className="header-wrapper">
       <div
         className="header flex-center-center"
-        style={{ backgroundColor: theme }}
+        style={{ backgroundColor: props.theme }}
       >
         <div
           className="brand flex-center-center"
           onClick={() => {
             navigate("/");
-            setGameRunning(false);
+            props.setGameRunning(false);
           }}
         >
           <h1>AIM</h1>
@@ -85,21 +94,18 @@ const Header = ({
         </div>
         <div className="links flex-center-center">
           {window.location.pathname !== "/" && (
-            <Link to="/" onClick={() => setGameRunning(false)}>
+            <Link to="/" onClick={() => props.setGameRunning(false)}>
               <FaHome />
             </Link>
           )}
           <Link to="/profile">
-            <FaUserCircle
-              onClick={(e) => handleClick(e)}
-              className="fa-user-circle"
-            />
+            <FaUserCircle onClick={handleClick} className="fa-user-circle" />
           </Link>
           <div style={loginWrapperStyle} ref={dropdownRef}>
             <Login
-              theme={theme}
-              setUser={setUser}
-              setShowMemberForm={setShowMemberForm}
+              theme={props.theme}
+              setUser={props.setUser}
+              setShowMemberForm={props.setShowMemberForm}
             />
           </div>
           <a
@@ -116,7 +122,7 @@ const Header = ({
           >
             <FaDev />
           </a>
-          {user && (
+          {props.isLoggedIn() && (
             <FaSignOutAlt
               style={{ cursor: "pointer" }}
               onClick={handleLogout}

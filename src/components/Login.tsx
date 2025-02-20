@@ -1,22 +1,33 @@
 import { useState } from "react";
 import { register, login } from "../requests/user";
+import { Themes } from "../constants/themes";
+import { IAuthRequest, IAuthResponse } from "../types/auth.types";
 
-const Login = ({ theme, setUser, setShowMemberForm }) => {
-  const [formData, setFormData] = useState({ username: "", password: "" });
-  const [isMember, setIsMember] = useState(true);
+type ILoginProps = {
+  theme: Themes;
+  setUser: React.Dispatch<React.SetStateAction<IAuthResponse>>;
+  setShowMemberForm: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-  const handleChange = (e) => {
+const Login = (props: ILoginProps) => {
+  const [formData, setFormData] = useState<IAuthRequest>({
+    username: "",
+    password: "",
+  });
+  const [isMember, setIsMember] = useState<boolean>(true);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-    setShowMemberForm(false);
-    isMember ? await login(formData, setUser) : await register(formData);
+    props.setShowMemberForm(false);
+    isMember ? await login(formData, props.setUser) : await register(formData);
     setFormData({ username: "", password: "" });
   };
 
   return (
-    <div className="login-wrapper" style={{ borderColor: theme }}>
+    <div className="login-wrapper" style={{ borderColor: props.theme }}>
       <div className="login">
         <input
           type="text"

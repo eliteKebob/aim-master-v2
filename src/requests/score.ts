@@ -1,20 +1,20 @@
+import { IScoreRequest, IScoreResponse } from "../types/score.types";
 import apiClient from "./init";
 
-export const postScore = async (data, callback = null) => {
-  const response = await apiClient
+export const postScore = async (data: IScoreRequest) => {
+  await apiClient
     .post("/score/result/", data)
     .then((response) => {
       console.log("🚀 post score request response: ", response);
-      if (response.status === 200) {
-        callback && callback();
-      }
     })
     .catch((error) => alert("Error when posting score!"));
 };
 
-export const getScores = async (data = null, callback = null) => {
+export const getScores = async (
+  callback: React.Dispatch<React.SetStateAction<IScoreResponse[] | null>>
+) => {
   const response = await apiClient
-    .get("/score/result/", data)
+    .get("/score/result/")
     .then((response) => {
       if (response.status === 200) {
         callback(response.data.data);

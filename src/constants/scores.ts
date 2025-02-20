@@ -17,3 +17,8 @@ export const SCORES = [
     message: "You should consider going pro.",
   },
 ];
+
+export enum GameModes {
+  Chill = "CH",
+  Challenge = "C",
+}

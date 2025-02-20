@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -10,6 +9,8 @@ import {
 } from "chart.js";
 import { Radar as Chart } from "react-chartjs-2";
 import { colorKeywordToRGB } from "../../utils/color";
+import { IScoreResponse } from "../../types/score.types";
+import { Themes } from "../../constants/themes";
 
 ChartJS.register(
   RadialLinearScale,
@@ -19,7 +20,13 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const Radar = ({ score, theme }) => {
+
+type IRadarProps = {
+  score: IScoreResponse;
+  theme: Themes;
+};
+
+const Radar = (props: IRadarProps) => {
   const options = {
     scales: {
       y: {
@@ -28,7 +35,7 @@ const Radar = ({ score, theme }) => {
     },
     plugins: {
       legend: {
-        position: "bottom",
+        position: "bottom" as const,
       },
       title: {
         display: true,
@@ -37,13 +44,13 @@ const Radar = ({ score, theme }) => {
     },
   };
   const data = {
-    labels: score?.labels,
+    labels: props.score.labels,
     datasets: [
       {
         label: "# grade",
-        data: score?.data,
-        backgroundColor: colorKeywordToRGB(theme, "0.2"),
-        borderColor: colorKeywordToRGB(theme),
+        data: props.score.data,
+        backgroundColor: colorKeywordToRGB(props.theme, "0.2"),
+        borderColor: colorKeywordToRGB(props.theme),
         borderWidth: 1,
       },
     ],
