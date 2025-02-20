@@ -14,19 +14,20 @@ import { GameModes, SCORES } from "../constants/scores";
 import { postScore } from "../requests/score";
 import { Themes } from "../constants/themes";
 import { IGrade } from "../types/score.types";
+import { useScreenshot } from "use-react-screenshot";
 
 type IGameOverProps = {
-  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
   score: number;
   theme: Themes;
   targets: number;
   targetSize: number;
+  gameLength: number;
   setScore: React.Dispatch<React.SetStateAction<number>>;
   setSecs: React.Dispatch<React.SetStateAction<number>>;
   setSpm: React.Dispatch<React.SetStateAction<number>>;
   setStartTime: React.Dispatch<React.SetStateAction<number>>;
   setGameRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  gameLength: number;
+  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const genericGrade = {
@@ -35,8 +36,6 @@ const genericGrade = {
 };
 
 const SECONDS_PER_MIN = 60;
-
-const useScreenshot = require("use-react-screenshot");
 
 const GameOver = (props: IGameOverProps) => {
   const parentRef = useRef<HTMLDivElement | null>(null);

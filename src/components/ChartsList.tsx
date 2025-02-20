@@ -26,15 +26,15 @@ const ChartsList = (props: IChartsListProps) => {
         <div>
           {props.scores
             ?.filter((score) => score.chart_type === ChartTypes.Bar)
-            .map((score) => {
-              return <Bar score={score} theme={props.theme} />;
+            .map((score, idx) => {
+              return <Bar score={score} theme={props.theme} key={idx} />;
             })}
         </div>
         <div>
           {props.scores
             ?.filter((score) => score.chart_type === ChartTypes.Pie)
-            .map((score) => {
-              return <Pie score={score} theme={props.theme} />;
+            .map((score, idx) => {
+              return <Pie score={score} theme={props.theme} key={idx} />;
             })}
         </div>
       </div>
@@ -42,15 +42,15 @@ const ChartsList = (props: IChartsListProps) => {
         <div>
           {props.scores
             ?.filter((score) => score.chart_type === ChartTypes.Polar)
-            .map((score) => {
-              return <Polar score={score} theme={props.theme} />;
+            .map((score, idx) => {
+              return <Polar score={score} theme={props.theme} key={idx} />;
             })}
         </div>
         <div>
           {props.scores
             ?.filter((score) => score.chart_type === ChartTypes.Line)
-            .map((score) => {
-              return <Line score={score} theme={props.theme} />;
+            .map((score, idx) => {
+              return <Line score={score} theme={props.theme} key={idx} />;
             })}
         </div>
       </div>
@@ -61,8 +61,8 @@ const ChartsList = (props: IChartsListProps) => {
         <div>
           {props.scores
             ?.filter((score) => score.chart_type === ChartTypes.Radar)
-            .map((score) => {
-              return <Radar score={score} theme={props.theme} />;
+            .map((score, idx) => {
+              return <Radar score={score} theme={props.theme} key={idx} />;
             })}
         </div>
       </div>
