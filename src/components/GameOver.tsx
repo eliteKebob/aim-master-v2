@@ -14,6 +14,7 @@ import { GameModes, SCORES } from "../constants/scores";
 import { postScore } from "../requests/score";
 import { Themes } from "../constants/themes";
 import { IGrade } from "../types/score.types";
+// @ts-expect-error
 import { useScreenshot } from "use-react-screenshot";
 
 type IGameOverProps = {
