@@ -1,32 +1,35 @@
 import { useEffect, useRef } from "react";
+import { Themes } from "../constants/themes";
 
-const SingleTarget = ({
-  targetSize,
-  gameRunning,
-  setScore,
-  score,
-  theme,
-  gameOver
-}) => {
-  let targetRef = useRef(null);
+type ISingleTarget = {
+  targetSize: number;
+  gameRunning: boolean;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
+  score: number;
+  theme: Themes;
+  gameOver: boolean;
+};
+
+const SingleTarget = (props: ISingleTarget) => {
+  let targetRef = useRef<HTMLDivElement | null>(null);
   const handleHover = () => {
-    if (gameRunning && !gameOver) {
+    if (props.gameRunning && !props.gameOver) {
       stylist();
-      setScore(score + 1);
+      props.setScore(props.score + 1);
     } else {
       return;
     }
   };
 
   const stylist = () => {
-    let rndTop = Math.floor(Math.random() * 77) + 20;
-    let rndRight = Math.floor(Math.random() * 91) + 5;
-    targetRef.current.style.top = `${rndTop}%`;
-    targetRef.current.style.right = `${rndRight}%`;
+    const rndTop = Math.floor(Math.random() * 77) + 20;
+    const rndRight = Math.floor(Math.random() * 91) + 5;
+    targetRef?.current && (targetRef.current.style.top = `${rndTop}%`);
+    targetRef?.current && (targetRef.current.style.right = `${rndRight}%`);
   };
 
   useEffect(() => {
-    if (gameRunning) {
+    if (props.gameRunning) {
       stylist();
     } else {
       return;
@@ -40,9 +43,9 @@ const SingleTarget = ({
       ref={targetRef}
       onMouseOver={() => handleHover()}
       style={{
-        width: `${targetSize}vh`,
-        height: `${targetSize}vh`,
-        backgroundColor: theme,
+        width: `${props.targetSize}vh`,
+        height: `${props.targetSize}vh`,
+        backgroundColor: props.theme,
       }}
     ></div>
   );

@@ -87,8 +87,8 @@ function App() {
                 setTheme={setTheme}
                 setIsChallenge={setIsChallenge}
                 clearGameSession={clearGameSession}
-                user={user}
                 setShowMemberForm={setShowMemberForm}
+                isLoggedIn={isLoggedIn}
               />
             }
           />
