@@ -11,7 +11,7 @@ export const postScore = async (data: IScoreRequest) => {
 };
 
 export const getScores = async (
-  callback: React.Dispatch<React.SetStateAction<IScoreResponse>>
+  callback: React.Dispatch<React.SetStateAction<IScoreResponse[] | null>>
 ) => {
   const response = await apiClient
     .get("/score/result/")

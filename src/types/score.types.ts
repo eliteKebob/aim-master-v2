@@ -13,7 +13,7 @@ export interface IScoreRequest {
 export interface IScoreResponse {
     chart_type: ChartTypes
     count?: number 
-    indicator?: string 
+    indicator?: string
     data?: number[] 
     labels?: string[] 
     details?: string[] 

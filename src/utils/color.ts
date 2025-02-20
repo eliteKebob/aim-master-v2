@@ -1,4 +1,7 @@
-export const colorKeywordToRGB = (colorKeyword: string, alpha = null) => {
+export const colorKeywordToRGB = (
+  colorKeyword: string,
+  alpha: string | null = null
+) => {
   let el = document.createElement("div");
   el.style.color = colorKeyword;
   document.body.appendChild(el);

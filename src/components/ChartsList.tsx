@@ -1,3 +1,6 @@
+import { ChartTypes } from "../constants/charts";
+import { Themes } from "../constants/themes";
+import { IScoreResponse } from "../types/score.types";
 import Bar from "./charts/Bar";
 import Bubble from "./charts/Bubble";
 import Count from "./charts/Count";
@@ -6,57 +9,60 @@ import Pie from "./charts/Pie";
 import Polar from "./charts/Polar";
 import Radar from "./charts/Radar";
 
-const ChartsList = ({ scores, theme }) => {
+type IChartsListProps = {
+  scores: IScoreResponse[];
+  theme: Themes;
+};
+
+const ChartsList = (props: IChartsListProps) => {
+  const counts = props.scores.filter((score) => score.chart_type === ChartTypes.Count);
+
   return (
     <div className="charts">
       <div className="count-charts">
-        {scores?.map((score, idx) => {
-          if (score?.chart_type === "count") {
-            return <Count score={score} key={idx} theme={theme} />;
-          }
-        })}
+        {counts.map((score, idx) => (<Count score={score} key={idx} theme={props.theme} />))}
       </div>
       <div className="chart-group">
         <div>
-          {scores
-            ?.filter((score) => score.chart_type === "bar")
+          {props.scores
+            ?.filter((score) => score.chart_type === ChartTypes.Bar)
             .map((score) => {
-              return <Bar score={score} theme={theme} />;
+              return <Bar score={score} theme={props.theme} />;
             })}
         </div>
         <div>
-          {scores
-            ?.filter((score) => score.chart_type === "pie")
+          {props.scores
+            ?.filter((score) => score.chart_type === ChartTypes.Pie)
             .map((score) => {
-              return <Pie score={score} theme={theme} />;
+              return <Pie score={score} theme={props.theme} />;
             })}
         </div>
       </div>
       <div className="chart-group">
         <div>
-          {scores
-            ?.filter((score) => score.chart_type === "polar")
+          {props.scores
+            ?.filter((score) => score.chart_type === ChartTypes.Polar)
             .map((score) => {
-              return <Polar score={score} theme={theme} />;
+              return <Polar score={score} theme={props.theme} />;
             })}
         </div>
         <div>
-          {scores
-            ?.filter((score) => score.chart_type === "line")
+          {props.scores
+            ?.filter((score) => score.chart_type === ChartTypes.Line)
             .map((score) => {
-              return <Line score={score} theme={theme} />;
+              return <Line score={score} theme={props.theme} />;
             })}
         </div>
       </div>
       <div className="chart-group">
         <div>
-          <Bubble theme={theme} />
+          <Bubble theme={props.theme} />
         </div>
         <div>
-          {scores
-            ?.filter((score) => score.chart_type === "radar")
+          {props.scores
+            ?.filter((score) => score.chart_type === ChartTypes.Radar)
             .map((score) => {
-              return <Radar score={score} theme={theme} />;
+              return <Radar score={score} theme={props.theme} />;
             })}
         </div>
       </div>

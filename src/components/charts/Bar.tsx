@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,9 +8,9 @@ import {
   Legend,
 } from "chart.js";
 import { Bar as Chart } from "react-chartjs-2";
-import { DAYS } from "../../constants/date";
-import faker from "faker";
 import { colorKeywordToRGB } from "../../utils/color";
+import { IScoreResponse } from "../../types/score.types";
+import { Themes } from "../../constants/themes";
 
 ChartJS.register(
   CategoryScale,
@@ -22,12 +21,17 @@ ChartJS.register(
   Legend
 );
 
-const Bar = ({ score, theme }) => {
+type IBarProps = {
+  score: IScoreResponse;
+  theme: Themes;
+};
+
+const Bar = (props:IBarProps) => {
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: "bottom",
+        position: "bottom" as const,
       },
       title: {
         display: true,
@@ -46,12 +50,12 @@ const Bar = ({ score, theme }) => {
     },
   };
   const data = {
-    labels: score?.labels,
+    labels: props.score.labels,
     datasets: [
       {
         label: "Challenge Date / SPM",
-        data: score?.data,
-        backgroundColor: colorKeywordToRGB(theme),
+        data: props.score.data,
+        backgroundColor: colorKeywordToRGB(props.theme),
       },
     ],
   };

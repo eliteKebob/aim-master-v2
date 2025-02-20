@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -7,10 +6,18 @@ import {
   Legend,
 } from "chart.js";
 import { PolarArea } from "react-chartjs-2";
+import { ChartColorPallettes, ChartTypes } from "../../constants/charts";
+import { IScoreResponse } from "../../types/score.types";
+import { Themes } from "../../constants/themes";
 
 ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 
-const Polar = ({ score, theme }) => {
+type IPolarProps = {
+  score: IScoreResponse;
+  theme: Themes;
+};
+
+const Polar = (props: IPolarProps) => {
   const options = {
     scales: {
       y: {
@@ -19,7 +26,7 @@ const Polar = ({ score, theme }) => {
     },
     plugins: {
       legend: {
-        position: "bottom",
+        position: "bottom" as const,
       },
       title: {
         display: true,
@@ -28,19 +35,12 @@ const Polar = ({ score, theme }) => {
     },
   };
   const data = {
-    labels: score?.labels,
+    labels: props.score.labels,
     datasets: [
       {
         label: "# of sessions played",
-        data: score?.data,
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.5)",
-          "rgba(54, 162, 235, 0.5)",
-          "rgba(255, 206, 86, 0.5)",
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-          "rgba(255, 159, 64, 0.5)",
-        ],
+        data: props.score.data,
+        backgroundColor: ChartColorPallettes[ChartTypes.Polar].bg,
         borderWidth: 1,
       },
     ],

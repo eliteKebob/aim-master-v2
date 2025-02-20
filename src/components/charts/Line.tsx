@@ -11,10 +11,12 @@ import {
 } from "chart.js";
 import {
   Line as Chart,
-  getDatasetAtEvent,
-  getElementAtEvent,
-  getElementsAtEvent,
+  // getDatasetAtEvent,
+  // getElementAtEvent,
+  // getElementsAtEvent,
 } from "react-chartjs-2";
+import { IScoreResponse } from "../../types/score.types";
+import { Themes } from "../../constants/themes";
 
 ChartJS.register(
   CategoryScale,
@@ -26,35 +28,40 @@ ChartJS.register(
   Legend
 );
 
-const Line = ({ score, theme }) => {
-  const printDatasetAtEvent = (dataset) => {
-    if (!dataset.length) return;
+type ILineProps = {
+  score: IScoreResponse,
+  theme: Themes
+}
 
-    const datasetIndex = dataset[0].datasetIndex;
+const Line = (props:ILineProps) => {
+  // const printDatasetAtEvent = (dataset) => {
+  //   if (!dataset.length) return;
 
-    console.log(data.datasets[datasetIndex].label);
-  };
+  //   const datasetIndex = dataset[0].datasetIndex;
 
-  const printElementAtEvent = (element) => {
-    if (!element.length) return;
+  //   console.log(data.datasets[datasetIndex].label);
+  // };
 
-    const { datasetIndex, index } = element[0];
+  // const printElementAtEvent = (element) => {
+  //   if (!element.length) return;
 
-    console.log(data.labels[index], data.datasets[datasetIndex].data[index]);
-  };
+  //   const { datasetIndex, index } = element[0];
 
-  const printElementsAtEvent = (elements) => {
-    if (!elements.length) return;
+  //   console.log(data.labels[index], data.datasets[datasetIndex].data[index]);
+  // };
 
-    console.log(elements.length);
-  };
+  // const printElementsAtEvent = (elements) => {
+  //   if (!elements.length) return;
+
+  //   console.log(elements.length);
+  // };
 
   const chartRef = useRef(null);
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: "bottom",
+        position: "bottom" as const,
       },
       title: {
         display: true,
@@ -64,40 +71,40 @@ const Line = ({ score, theme }) => {
   };
 
   const data = {
-    labels: score?.labels,
+    labels: props.score.labels,
     datasets: [
       {
         label: "SPM",
-        data: score?.datasets[0],
+        data: props.score.datasets && props.score.datasets[0],
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
       {
         label: "Grade",
-        data: score?.datasets[1],
+        data: props.score.datasets && props.score.datasets[1],
         borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
     ],
-    gameDetails: score?.details,
+    gameDetails: props.score?.details,
   };
 
-  const handleHover = (event) => {
-    const { current: chart } = chartRef;
+  // const handleHover = (event) => {
+  //   const { current: chart } = chartRef;
 
-    if (!chart) {
-      return;
-    }
-    printDatasetAtEvent(getDatasetAtEvent(chart, event));
-    printElementAtEvent(getElementAtEvent(chart, event));
-    printElementsAtEvent(getElementsAtEvent(chart, event));
-  };
+  //   if (!chart) {
+  //     return;
+  //   }
+  //   printDatasetAtEvent(getDatasetAtEvent(chart, event));
+  //   printElementAtEvent(getElementAtEvent(chart, event));
+  //   printElementsAtEvent(getElementsAtEvent(chart, event));
+  // };
   return (
     <Chart
       ref={chartRef}
       options={options}
       data={data}
-      onMouseOver={handleHover}
+      // onMouseOver={handleHover}
     />
   );
 };

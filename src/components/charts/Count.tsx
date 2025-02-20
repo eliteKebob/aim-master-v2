@@ -1,17 +1,23 @@
-import React from "react";
+import { INDICATOR_TITLE } from "../../constants/charts";
+import { Themes } from "../../constants/themes";
+import { IScoreResponse } from "../../types/score.types";
 
-const INDICATOR_TITLE = {
-  "challenge_game_count": "Challenge Games Played",
-  "chill_game_count": "Chill Games Played",
-  "average_spm": "Average SPM",
-  "total_seconds": "Total Seconds Played"
-}
+type ICountProps = {
+  score: IScoreResponse;
+  theme: Themes;
+};
 
-const Count = ({ score, theme }) => {
+const Count = (props: ICountProps) => {
+  const indicator = props.score.indicator as keyof typeof INDICATOR_TITLE;
+  const title = INDICATOR_TITLE[indicator];
+
   return (
-    <div className="count-chart-wrapper" style={{ border: `0.25vh solid ${theme}` }}>
-      <p>{INDICATOR_TITLE[score?.indicator]}</p>
-      <p>{score?.count}</p>
+    <div
+      className="count-chart-wrapper"
+      style={{ border: `0.25vh solid ${props.theme}` }}
+    >
+      <p>{title}</p>
+      <p>{props.score.count}</p>
     </div>
   );
 };

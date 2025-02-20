@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -8,10 +7,15 @@ import {
 } from "chart.js";
 import { Bubble as Chart } from "react-chartjs-2";
 import faker from "faker";
+import { Themes } from "../../constants/themes";
 
 ChartJS.register(LinearScale, PointElement, Tooltip, Legend);
 
-const Bubble = ({ theme }) => {
+type IBubbleProps = {
+  theme: Themes;
+};
+
+const Bubble = (props: IBubbleProps) => {
   const options = {
     scales: {
       y: {
@@ -20,7 +24,7 @@ const Bubble = ({ theme }) => {
     },
     plugins: {
       legend: {
-        position: "bottom",
+        position: "bottom" as const,
       },
     },
   };
