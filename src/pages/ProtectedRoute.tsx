@@ -1,12 +1,17 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { IAuthResponse } from "../types/auth.types";
 
-const ProtectedRoute = ({ user, children }) => {
-  if (!user) {
+type IProtectedRouteProps = {
+  user: IAuthResponse;
+  children: any;
+};
+
+const ProtectedRoute = (props: IProtectedRouteProps) => {
+  if (!props.user || props.user.access === "") {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return props.children;
 };
 
 export default ProtectedRoute;

@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 
 const SingleTarget = ({
-  target,
   targetSize,
   gameRunning,
   setScore,
@@ -9,7 +8,7 @@ const SingleTarget = ({
   theme,
   gameOver
 }) => {
-  let targetRef = useRef();
+  let targetRef = useRef(null);
   const handleHover = () => {
     if (gameRunning && !gameOver) {
       stylist();

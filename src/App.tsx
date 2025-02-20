@@ -16,7 +16,7 @@ function App() {
   const [theme, setTheme] = useState<Themes>(Themes.LightSkyBlue);
   const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [isChallenge, setIsChallenge] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState("");
+  const [startTime, setStartTime] = useState<number>(0);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [user, setUser] = useState<IAuthResponse>({ access: "", refresh: "" });
   const [showMemberForm, setShowMemberForm] = useState<boolean>(false);
@@ -28,7 +28,7 @@ function App() {
     setGameRunning(false);
     setScore(0);
     setIsChallenge(false);
-    setStartTime("");
+    setStartTime(0);
     setGameOver(false);
     setShowMemberForm(false);
   };
@@ -36,7 +36,7 @@ function App() {
   useEffect(() => {
     const access = localStorage.getItem("access");
     const refresh = localStorage.getItem("refresh");
-    if (access && refresh) {
+    if (access && refresh && access !== "" && refresh !== "") {
       setUser({
         access: access,
         refresh: refresh,
@@ -58,16 +58,20 @@ function App() {
     // eslint-disable-next-line
   }, [gameRunning]);
 
+  const isLoggedIn = (): boolean => {
+    return user && user.access !== "" && user.refresh !== "";
+  };
+
   return (
     <>
       <BrowserRouter>
         <Header
           theme={theme}
-          user={user}
           setUser={setUser}
           showMemberForm={showMemberForm}
           setShowMemberForm={setShowMemberForm}
           setGameRunning={setGameRunning}
+          isLoggedIn={isLoggedIn}
         />
         <Routes>
           <Route
