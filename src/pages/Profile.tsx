@@ -7,7 +7,7 @@ const Profile = ({ theme }) => {
 
   useEffect(() => {
     const _request = async () => {
-      await getScores(null, setScores);
+      await getScores(setScores);
     };
     _request();
     // eslint-disable-next-line

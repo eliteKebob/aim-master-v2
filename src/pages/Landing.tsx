@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { THEMES } from "../constants/themes";
+import { Themes } from "../constants/themes";
 import { FaLock } from "react-icons/fa";
 
 const Landing = ({
@@ -81,7 +81,7 @@ const Landing = ({
       </div>
       <p className="cam-text">Choose a Theme</p>
       <div className="set-theme flex-center-center">
-        {THEMES?.map((t) => (
+        {(Object.keys(Themes) as Array<keyof typeof Themes>)?.map((t) => (
           <div
             className={`theme theme-${t}`}
             onClick={() => setTheme(t)}

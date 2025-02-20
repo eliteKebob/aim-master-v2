@@ -11,7 +11,7 @@ import Logo from "../assets/logo.png";
 import { useScreenshot } from "use-react-screenshot";
 import { useNavigate } from "react-router-dom";
 import autoAnimate from "@formkit/auto-animate";
-import { SCORES } from "../constants/scores";
+import { GameModes, SCORES } from "../constants/scores";
 import { postScore } from "../requests/score";
 
 const GameOver = ({
@@ -83,7 +83,7 @@ const GameOver = ({
         target_size: targetSize,
         total_target: targets,
         target_hit: score,
-        mode: "C", // "C" for challenge, "CH" for chill
+        mode: GameModes.Challenge
       });
     };
     _request();

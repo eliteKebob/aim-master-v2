@@ -1,11 +1,10 @@
-import React from "react";
-import Bar from "../components/charts/Bar";
-import Bubble from "../components/charts/Bubble";
-import Count from "../components/charts/Count";
-import Line from "../components/charts/Line";
-import Pie from "../components/charts/Pie";
-import Polar from "../components/charts/Polar";
-import Radar from "../components/charts/Radar";
+import Bar from "./charts/Bar";
+import Bubble from "./charts/Bubble";
+import Count from "./charts/Count";
+import Line from "./charts/Line";
+import Pie from "./charts/Pie";
+import Polar from "./charts/Polar";
+import Radar from "./charts/Radar";
 
 const ChartsList = ({ scores, theme }) => {
   return (

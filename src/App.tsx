@@ -7,12 +7,13 @@ import Profile from "./pages/Profile";
 import { postScore } from "./requests/score";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { IAuthResponse } from "./types/auth.types";
+import { Themes } from "./constants/themes";
 
 function App() {
   const [score, setScore] = useState<number>(0);
   const [targetSize, setTargetSize] = useState<number>(3);
   const [targets, setTargets] = useState<number>(7);
-  const [theme, setTheme] = useState<string>("lightskyblue");
+  const [theme, setTheme] = useState<Themes>(Themes.LightSkyBlue);
   const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [isChallenge, setIsChallenge] = useState<boolean>(false);
   const [startTime, setStartTime] = useState("");

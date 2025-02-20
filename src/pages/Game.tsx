@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { FaClock, FaCrosshairs, FaFireAlt } from "react-icons/fa";
 import GameOver from "../components/GameOver";
 import { useNavigate } from "react-router-dom";
+import { GameModes } from "../constants/scores";
 
 const Game = ({
   score,
@@ -91,7 +92,7 @@ const Game = ({
             target_size: targetSize,
             total_target: targets,
             target_hit: score,
-            mode: "CH", // "C" for challenge, "CH" for chill
+            mode: GameModes.Chill
           })
         );
       }
