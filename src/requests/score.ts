@@ -1,7 +1,8 @@
+import { IScoreRequest } from "../types/score.types";
 import apiClient from "./init";
 
-export const postScore = async (data, callback = null) => {
-  const response = await apiClient
+export const postScore = async (data: IScoreRequest) => {
+  await apiClient
     .post("/score/result/", data)
     .then((response) => {
       console.log("🚀 post score request response: ", response);

@@ -6,20 +6,22 @@ import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
 import { postScore } from "./requests/score";
 import ProtectedRoute from "./pages/ProtectedRoute";
+import { IAuthResponse } from "./types/auth.types";
 
 function App() {
-  const [score, setScore] = useState(0);
-  const [targetSize, setTargetSize] = useState(3);
-  const [targets, setTargets] = useState(7);
-  const [theme, setTheme] = useState("lightskyblue");
-  const [gameRunning, setGameRunning] = useState(false);
-  const [isChallenge, setIsChallenge] = useState(false);
+  const [score, setScore] = useState<number>(0);
+  const [targetSize, setTargetSize] = useState<number>(3);
+  const [targets, setTargets] = useState<number>(7);
+  const [theme, setTheme] = useState<string>("lightskyblue");
+  const [gameRunning, setGameRunning] = useState<boolean>(false);
+  const [isChallenge, setIsChallenge] = useState<boolean>(false);
   const [startTime, setStartTime] = useState("");
-  const [gameOver, setGameOver] = useState(false);
-  const [user, setUser] = useState(null);
-  const [showMemberForm, setShowMemberForm] = useState(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [user, setUser] = useState<IAuthResponse>({ access: "", refresh: "" });
+  const [showMemberForm, setShowMemberForm] = useState<boolean>(false);
 
-  document.getElementById("root").style.color = theme;
+  const root = document.getElementById("root");
+  root && (root.style.color = theme);
 
   const clearGameSession = () => {
     setGameRunning(false);
@@ -31,30 +33,29 @@ function App() {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("access") && localStorage.getItem("refresh")) {
-      // send get user request
+    const access = localStorage.getItem("access");
+    const refresh = localStorage.getItem("refresh");
+    if (access && refresh) {
       setUser({
-        access: localStorage.getItem("access"),
-        refresh: localStorage.getItem("refresh"),
+        access: access,
+        refresh: refresh,
       });
     }
   }, []);
 
   useEffect(() => {
     if (!gameRunning && user) {
-      if (localStorage.getItem("chill")) {
-        const clearGame = () => {
-          localStorage.removeItem("chill");
-        };
+      const chillGame = localStorage.getItem("chill");
+      if (chillGame) {
         const _request = async () => {
-          await postScore(JSON.parse(localStorage.getItem("chill")), clearGame);
+          await postScore(JSON.parse(chillGame));
         };
         _request();
+        localStorage.removeItem("chill");
       }
     }
     // eslint-disable-next-line
-  }, [gameRunning])
-  
+  }, [gameRunning]);
 
   return (
     <>
@@ -76,14 +77,10 @@ function App() {
                 setTargetSize={setTargetSize}
                 targets={targets}
                 setTargets={setTargets}
-                gameRunning={gameRunning}
                 setGameRunning={setGameRunning}
                 theme={theme}
                 setTheme={setTheme}
-                setScore={setScore}
                 setIsChallenge={setIsChallenge}
-                setStartTime={setStartTime}
-                setGameOver={setGameOver}
                 clearGameSession={clearGameSession}
                 user={user}
                 setShowMemberForm={setShowMemberForm}
@@ -101,7 +98,6 @@ function App() {
                 setGameRunning={setGameRunning}
                 theme={theme}
                 targets={targets}
-                setTargets={setTargets}
                 setStartTime={setStartTime}
                 startTime={startTime}
                 isChallenge={isChallenge}
