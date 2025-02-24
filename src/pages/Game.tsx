@@ -1,6 +1,5 @@
 import SingleTarget from "../components/SingleTarget";
-import { useState, useEffect } from "react";
-import { FaClock, FaCrosshairs, FaFireAlt } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
 import GameOver from "../components/GameOver";
 import { useNavigate } from "react-router-dom";
 import { GameModes } from "../constants/scores";
@@ -11,6 +10,8 @@ import {
   SECONDS_PER_MINUTE,
 } from "../constants/date";
 import { IGame } from "../types/component.types";
+import Scoreboard from "../components/Scoreboard";
+import Crosshair from "../assets/crosshair.png";
 
 const Game = ({
   score,
@@ -28,11 +29,17 @@ const Game = ({
   isChallenge,
   user,
   clickToHit,
+  sensitivity,
 }: IGame) => {
-  const [targetsArr, setTargetsArr] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
+  const game = useRef<HTMLDivElement>(null);
+
+  const [targetsArr, setTargetsArr] = useState<number[]>([...Array(targets)]);
   const [secs, setSecs] = useState<number>(SECONDS_PER_GAME);
   const [now, setNow] = useState<number>(0);
   const [spm, setSpm] = useState<number>(0);
+
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isLocked, setIsLocked] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -50,11 +57,28 @@ const Game = ({
   }, []);
 
   useEffect(() => {
-    let newTargetsArr = [];
-    for (let i = 0; i < targets; i++) newTargetsArr.push(i);
-    setTargetsArr(newTargetsArr);
+    const handleMouseMove = (e: MouseEvent) => {
+      setPosition((prev) => ({
+        x: prev.x + e.movementX * sensitivity,
+        y: prev.y + e.movementY * sensitivity,
+      }));
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+    };
     // eslint-disable-next-line
-  }, [targets]);
+  }, []);
+
+  useEffect(() => {
+    const handleLockChange = () => {
+      setIsLocked(document.pointerLockElement === game.current);
+    };
+    document.addEventListener("pointerlockchange", handleLockChange);
+    return () => {
+      document.removeEventListener("pointerlockchange", handleLockChange);
+    };
+  }, []);
 
   var x = setInterval(function () {
     if (!gameOver) {
@@ -125,36 +149,24 @@ const Game = ({
     // eslint-disable-next-line
   }, [secs]);
 
-  const determineSecondsToRender = (): number => {
-    if (isChallenge) {
-      if (secs + 1 >= SECONDS_PER_GAME) {
-        return SECONDS_PER_GAME;
-      }
-      return secs + 1;
+  const handleClick = (e: React.MouseEvent) => {
+    if (isLocked) {
+      document.exitPointerLock();
+    } else if (game.current) {
+      setPosition({x: e.clientX, y:e.clientY})
+      game.current.requestPointerLock();
     }
-    return secs;
   };
 
   return (
     <div className="game-wrapper" id="game-table">
-      <div
-        className="scoreboard flex-center-center"
-        style={{ borderBottom: `0.5vh solid ${theme}` }}
-      >
-        <div className="score-count flex-center-center">
-          <FaCrosshairs /> {score}
-        </div>
-        <>
-          {secs >= 0 && (
-            <div className="countdown flex-center-center">
-              <FaClock /> {determineSecondsToRender()}s
-            </div>
-          )}
-          <div className="spm-count flex-center-center">
-            <FaFireAlt /> {spm} SPM
-          </div>
-        </>
-      </div>
+      <Scoreboard
+        score={score}
+        secs={secs}
+        spm={spm}
+        isChallenge={isChallenge}
+        theme={theme}
+      />
       {gameOver ? (
         <GameOver
           setGameOver={setGameOver}
@@ -171,18 +183,39 @@ const Game = ({
         />
       ) : (
         <>
-          {targetsArr?.map((_, idx) => (
-            <SingleTarget
-              key={idx}
-              targetSize={targetSize}
-              setScore={setScore}
-              score={score}
-              gameRunning={gameRunning}
-              theme={theme}
-              gameOver={gameOver}
-              clickToHit={clickToHit}
-            />
-          ))}
+          <div id="game" ref={game}>
+            <p onClick={handleClick} style={{ cursor: "pointer" }}>
+              {isLocked ? "Pointer Locked" : "Click to Lock Pointer"}
+            </p>
+            {isLocked && (
+              <img
+                src={Crosshair}
+                alt="crosshair"
+                style={{
+                  width: "20px",
+                  top: `${position.y}px`,
+                  left: `${position.x}px`,
+                  transform: "translate(-50%, -50%)",
+                  position: "absolute",
+                  zIndex: "6",
+                  pointerEvents: "none",
+                }}
+              ></img>
+            )}
+            {targetsArr?.map((_, idx) => (
+              <SingleTarget
+                key={idx}
+                targetSize={targetSize}
+                setScore={setScore}
+                score={score}
+                gameRunning={gameRunning}
+                theme={theme}
+                gameOver={gameOver}
+                clickToHit={clickToHit}
+                position={position}
+              />
+            ))}
+          </div>
         </>
       )}
     </div>

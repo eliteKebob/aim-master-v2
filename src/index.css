@@ -116,6 +116,10 @@ h1 {
   width: 100vw;
 }
 
+/* #game {
+  cursor: none;
+} */
+
 .score-count,
 .countdown,
 .spm-count {

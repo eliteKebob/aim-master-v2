@@ -21,7 +21,7 @@ const Header = ({
   isLoggedIn,
 }: IHeader) => {
   const navigate = useNavigate();
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleClick = (event: React.MouseEvent<SVGElement>) => {
     if (!isLoggedIn()) {

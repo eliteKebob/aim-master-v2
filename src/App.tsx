@@ -18,6 +18,7 @@ const App = () => {
   const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [isChallenge, setIsChallenge] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number>(0);
+  const [sensitivity, setSensitivity] = useState<number>(0.5);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [user, setUser] = useState<IAuthResponse>({ access: "", refresh: "" });
   const [showMemberForm, setShowMemberForm] = useState<boolean>(false);
@@ -66,10 +67,10 @@ const App = () => {
 
   const gameProps = {
     theme: theme,
-    targetSize: targetSize,
     targets: targets,
-    setGameRunning: setGameRunning,
+    targetSize: targetSize,
     clickToHit: clickToHit,
+    setGameRunning: setGameRunning,
     setShowMemberForm: setShowMemberForm,
   };
 
@@ -113,6 +114,7 @@ const App = () => {
                 gameOver={gameOver}
                 setGameOver={setGameOver}
                 user={user}
+                sensitivity={sensitivity}
                 {...gameProps}
               />
             }

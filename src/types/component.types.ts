@@ -69,12 +69,20 @@ export interface ISingleTarget extends WithTheme, WithGameConfig {
   gameRunning: boolean;
   gameOver: boolean;
   targetSize: number;
+  position: any;
 }
 
 export interface IStartGame extends WithTheme, WithGameState {
   setIsChallenge: SetState<boolean>;
   isLoggedIn: () => boolean;
   setShowMemberForm: SetState<boolean>;
+}
+
+export interface IScoreboard extends WithTheme {
+  score: number;
+  secs: number;
+  spm: number;
+  isChallenge: boolean;
 }
 
 export interface IGame
@@ -86,6 +94,7 @@ export interface IGame
   user: IAuthResponse;
   isChallenge: boolean;
   setShowMemberForm: SetState<boolean>;
+  sensitivity: number;
 }
 
 export interface ILanding

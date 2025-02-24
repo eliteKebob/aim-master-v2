@@ -84,6 +84,7 @@ const GameOver = ({
     const finalResult =
       (score * (SECONDS_PER_MINUTE / gameLength)) / (targets + targetSize);
     const grade = gradeGetter(Math.round(finalResult)) as IGrade;
+    
     setGrade(grade);
 
     const _request = async () => {
