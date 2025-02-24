@@ -64,6 +64,15 @@ const App = () => {
     return user && user.access !== "" && user.refresh !== "";
   };
 
+  const gameProps = {
+    theme: theme,
+    targetSize: targetSize,
+    targets: targets,
+    setGameRunning: setGameRunning,
+    clickToHit: clickToHit,
+    setShowMemberForm: setShowMemberForm,
+  };
+
   return (
     <>
       <BrowserRouter>
@@ -80,19 +89,14 @@ const App = () => {
             path="/"
             element={
               <Landing
-                targetSize={targetSize}
                 setTargetSize={setTargetSize}
-                targets={targets}
                 setTargets={setTargets}
-                setGameRunning={setGameRunning}
-                theme={theme}
+                clearGameSession={clearGameSession}
                 setTheme={setTheme}
                 setIsChallenge={setIsChallenge}
-                clearGameSession={clearGameSession}
-                setShowMemberForm={setShowMemberForm}
                 isLoggedIn={isLoggedIn}
                 setClickToHit={setClickToHit}
-                clickToHit={clickToHit}
+                {...gameProps}
               />
             }
           />
@@ -102,19 +106,14 @@ const App = () => {
               <Game
                 score={score}
                 setScore={setScore}
-                targetSize={targetSize}
                 gameRunning={gameRunning}
-                setGameRunning={setGameRunning}
-                theme={theme}
-                targets={targets}
                 setStartTime={setStartTime}
                 startTime={startTime}
                 isChallenge={isChallenge}
                 gameOver={gameOver}
                 setGameOver={setGameOver}
-                setShowMemberForm={setShowMemberForm}
                 user={user}
-                clickToHit={clickToHit}
+                {...gameProps}
               />
             }
           />

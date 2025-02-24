@@ -81,18 +81,16 @@ export interface IGame
   extends WithTheme,
     WithGameConfig,
     WithGameSession,
-    WithAuth,
     WithGameState,
     Target {
   user: IAuthResponse;
-  isLoggedIn: () => boolean;
   isChallenge: boolean;
+  setShowMemberForm: SetState<boolean>;
 }
 
 export interface ILanding
   extends WithTheme,
     WithGameConfig,
-    WithAuth,
     WithGameState,
     Target,
     SetTarget {
@@ -101,6 +99,7 @@ export interface ILanding
   setClickToHit: SetState<boolean>;
   clearGameSession: () => void;
   isLoggedIn: () => boolean;
+  setShowMemberForm: SetState<boolean>;
 }
 
 export interface IProfile extends WithTheme {}
