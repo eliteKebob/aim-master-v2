@@ -1,23 +1,31 @@
 import { useEffect, useRef } from "react";
-import { Themes } from "../constants/themes";
+import { ISingleTarget } from "../types/component.types";
 
-type ISingleTarget = {
-  targetSize: number;
-  gameRunning: boolean;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
-  score: number;
-  theme: Themes;
-  gameOver: boolean;
-};
-
-const SingleTarget = (props: ISingleTarget) => {
+const SingleTarget = ({
+  targetSize,
+  gameRunning,
+  setScore,
+  score,
+  theme,
+  gameOver,
+  clickToHit,
+}: ISingleTarget) => {
   let targetRef = useRef<HTMLDivElement | null>(null);
-  const handleHover = () => {
-    if (props.gameRunning && !props.gameOver) {
-      stylist();
-      props.setScore(props.score + 1);
-    } else {
-      return;
+
+  const handleTargetHit = (e: React.MouseEvent<HTMLDivElement>) => {
+    const hit = () => {
+      if (gameRunning && !gameOver) {
+        stylist();
+        setScore(score + 1);
+      }
+    };
+    switch (e.type) {
+      case "click":
+        clickToHit && hit();
+        break;
+      case "mouseover":
+        !clickToHit && hit();
+        break;
     }
   };
 
@@ -29,10 +37,8 @@ const SingleTarget = (props: ISingleTarget) => {
   };
 
   useEffect(() => {
-    if (props.gameRunning) {
+    if (gameRunning) {
       stylist();
-    } else {
-      return;
     }
     // eslint-disable-next-line
   }, []);
@@ -41,11 +47,12 @@ const SingleTarget = (props: ISingleTarget) => {
     <div
       className="single-target"
       ref={targetRef}
-      onMouseOver={() => handleHover()}
+      onMouseOver={(e) => handleTargetHit(e)}
+      onClick={(e) => handleTargetHit(e)}
       style={{
-        width: `${props.targetSize}vh`,
-        height: `${props.targetSize}vh`,
-        backgroundColor: props.theme,
+        width: `${targetSize}vh`,
+        height: `${targetSize}vh`,
+        backgroundColor: theme,
       }}
     ></div>
   );

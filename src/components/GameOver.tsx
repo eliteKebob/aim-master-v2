@@ -12,33 +12,30 @@ import { useNavigate } from "react-router-dom";
 import autoAnimate from "@formkit/auto-animate";
 import { GameModes, SCORES } from "../constants/scores";
 import { postScore } from "../requests/score";
-import { Themes } from "../constants/themes";
 import { IGrade } from "../types/score.types";
 // @ts-expect-error
 import { useScreenshot } from "use-react-screenshot";
-
-type IGameOverProps = {
-  score: number;
-  theme: Themes;
-  targets: number;
-  targetSize: number;
-  gameLength: number;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
-  setSecs: React.Dispatch<React.SetStateAction<number>>;
-  setSpm: React.Dispatch<React.SetStateAction<number>>;
-  setStartTime: React.Dispatch<React.SetStateAction<number>>;
-  setGameRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
-};
+import { SECONDS_PER_MINUTE } from "../constants/date";
+import { IGameOver } from "../types/component.types";
 
 const genericGrade = {
   name: "Generic Grade",
   message: "Generic Grade Message",
 };
 
-const SECONDS_PER_MIN = 60;
-
-const GameOver = (props: IGameOverProps) => {
+const GameOver = ({
+  score,
+  targetSize,
+  targets,
+  theme,
+  gameLength,
+  setGameOver,
+  setGameRunning,
+  setScore,
+  setSecs,
+  setSpm,
+  setStartTime,
+}: IGameOver) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
   const resultRef = createRef<HTMLDivElement | null>();
   const downloadRef = createRef<HTMLAnchorElement | null>();
@@ -52,21 +49,21 @@ const GameOver = (props: IGameOverProps) => {
   const getImage = () => takeScreenshot(resultRef.current);
 
   const handleRetry = () => {
-    props.setGameOver(false);
-    props.setScore(0);
-    props.setSecs(props.gameLength);
-    props.setSpm(0);
-    props.setStartTime(new Date().getTime());
+    setGameOver(false);
+    setScore(0);
+    setSecs(gameLength);
+    setSpm(0);
+    setStartTime(new Date().getTime());
     setGrade(genericGrade);
   };
 
   const handleHome = () => {
-    props.setScore(0);
-    props.setSecs(props.gameLength);
-    props.setSpm(0);
-    props.setStartTime(0);
-    props.setGameRunning(false);
-    props.setGameOver(false);
+    setScore(0);
+    setSecs(gameLength);
+    setSpm(0);
+    setStartTime(0);
+    setGameRunning(false);
+    setGameOver(false);
     setGrade(genericGrade);
     navigate("/");
   };
@@ -85,18 +82,17 @@ const GameOver = (props: IGameOverProps) => {
 
   useEffect(() => {
     const finalResult =
-      (props.score * (SECONDS_PER_MIN / props.gameLength)) /
-      (props.targets + props.targetSize);
+      (score * (SECONDS_PER_MINUTE / gameLength)) / (targets + targetSize);
     const grade = gradeGetter(Math.round(finalResult)) as IGrade;
     setGrade(grade);
 
     const _request = async () => {
       await postScore({
-        tz_offset: -(new Date().getTimezoneOffset() / SECONDS_PER_MIN),
-        game_length: props.gameLength,
-        target_size: props.targetSize,
-        total_target: props.targets,
-        target_hit: props.score,
+        tz_offset: -(new Date().getTimezoneOffset() / SECONDS_PER_MINUTE),
+        game_length: gameLength,
+        target_size: targetSize,
+        total_target: targets,
+        target_hit: score,
         mode: GameModes.Challenge,
       });
     };
@@ -122,23 +118,23 @@ const GameOver = (props: IGameOverProps) => {
     >
       <div
         className="go-content flex-center-center"
-        style={{ border: `0.5vh solid ${props.theme}` }}
+        style={{ border: `0.5vh solid ${theme}` }}
       >
         <div className="go-stats flex-center-center" ref={resultRef}>
           <div className="stat-group flex-center-center">
             <div
               className="go-stat flex-center-center"
-              style={{ border: `0.25vh solid ${props.theme}` }}
+              style={{ border: `0.25vh solid ${theme}` }}
             >
               <FaCrosshairs />
               <p>
                 You aimed at target{" "}
-                <span style={{ fontSize: "8vh" }}>{props.score}</span> times
+                <span style={{ fontSize: "8vh" }}>{score}</span> times
               </p>
             </div>
             <div
               className="go-stat flex-center-center"
-              style={{ border: `0.25vh solid ${props.theme}` }}
+              style={{ border: `0.25vh solid ${theme}` }}
             >
               <FaAward />
               <p>
@@ -150,7 +146,7 @@ const GameOver = (props: IGameOverProps) => {
           </div>
           <div
             className="settings-group flex-center-center"
-            style={{ border: `0.25vh solid ${props.theme}` }}
+            style={{ border: `0.25vh solid ${theme}` }}
           >
             <h4 className="flex-center-center" style={{ gap: ".5vw" }}>
               <FaCog /> Settings
@@ -159,20 +155,20 @@ const GameOver = (props: IGameOverProps) => {
               <p>
                 Target Size:{" "}
                 <span style={{ fontSize: "3vh", fontWeight: "400" }}>
-                  {props.targetSize}
+                  {targetSize}
                 </span>
               </p>
               <p>
                 Total Targets on Screen:{" "}
                 <span style={{ fontSize: "3vh", fontWeight: "400" }}>
-                  {props.targets}
+                  {targets}
                 </span>
               </p>
             </div>
           </div>
           <div
             className="aimmaster-brand flex-center-center"
-            style={{ backgroundColor: props.theme }}
+            style={{ backgroundColor: theme }}
           >
             <h1>AIM</h1>
             <img src={Logo} alt="" />
@@ -182,7 +178,7 @@ const GameOver = (props: IGameOverProps) => {
         <div className="btn-group flex-center-center">
           <div
             className="go-btn flex-center-center"
-            style={{ border: `0.25vh solid ${props.theme}` }}
+            style={{ border: `0.25vh solid ${theme}` }}
             onClick={() => handleRetry()}
           >
             {" "}
@@ -190,7 +186,7 @@ const GameOver = (props: IGameOverProps) => {
           </div>
           <div
             className="go-btn flex-center-center"
-            style={{ border: `0.25vh solid ${props.theme}` }}
+            style={{ border: `0.25vh solid ${theme}` }}
             onClick={getImage}
           >
             {" "}
@@ -208,7 +204,7 @@ const GameOver = (props: IGameOverProps) => {
           </div>
           <div
             className="go-btn flex-center-center"
-            style={{ border: `0.25vh solid ${props.theme}` }}
+            style={{ border: `0.25vh solid ${theme}` }}
             onClick={() => handleHome()}
           >
             {" "}

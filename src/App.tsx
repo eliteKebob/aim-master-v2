@@ -8,8 +8,9 @@ import { postScore } from "./requests/score";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { IAuthResponse } from "./types/auth.types";
 import { Themes } from "./constants/themes";
+import { GameModes } from "./constants/scores";
 
-function App() {
+const App = () => {
   const [score, setScore] = useState<number>(0);
   const [targetSize, setTargetSize] = useState<number>(3);
   const [targets, setTargets] = useState<number>(7);
@@ -20,6 +21,7 @@ function App() {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [user, setUser] = useState<IAuthResponse>({ access: "", refresh: "" });
   const [showMemberForm, setShowMemberForm] = useState<boolean>(false);
+  const [clickToHit, setClickToHit] = useState<boolean>(false);
 
   const root = document.getElementById("root");
   root && (root.style.color = theme);
@@ -46,13 +48,13 @@ function App() {
 
   useEffect(() => {
     if (!gameRunning && user) {
-      const chillGame = localStorage.getItem("chill");
+      const chillGame = localStorage.getItem(GameModes.Chill);
       if (chillGame) {
         const _request = async () => {
           await postScore(JSON.parse(chillGame));
         };
         _request();
-        localStorage.removeItem("chill");
+        localStorage.removeItem(GameModes.Chill);
       }
     }
     // eslint-disable-next-line
@@ -89,6 +91,8 @@ function App() {
                 clearGameSession={clearGameSession}
                 setShowMemberForm={setShowMemberForm}
                 isLoggedIn={isLoggedIn}
+                setClickToHit={setClickToHit}
+                clickToHit={clickToHit}
               />
             }
           />
@@ -110,6 +114,7 @@ function App() {
                 setGameOver={setGameOver}
                 setShowMemberForm={setShowMemberForm}
                 user={user}
+                clickToHit={clickToHit}
               />
             }
           />
@@ -125,6 +130,6 @@ function App() {
       </BrowserRouter>
     </>
   );
-}
+};
 
 export default App;

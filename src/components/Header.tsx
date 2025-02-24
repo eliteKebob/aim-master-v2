@@ -10,42 +10,39 @@ import {
 import { useRef, useEffect } from "react";
 import Login from "./Login";
 import { logout } from "../requests/user";
-import { Themes } from "../constants/themes";
-import { IAuthResponse } from "../types/auth.types";
+import { IHeader } from "../types/component.types";
 
-type IHeaderProps = {
-  theme: Themes;
-  setUser: React.Dispatch<React.SetStateAction<IAuthResponse>>;
-  setShowMemberForm: React.Dispatch<React.SetStateAction<boolean>>;
-  showMemberForm: boolean;
-  setGameRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  isLoggedIn: () => boolean;
-};
-
-const Header = (props: IHeaderProps) => {
+const Header = ({
+  theme,
+  setGameRunning,
+  setShowMemberForm,
+  setUser,
+  showMemberForm,
+  isLoggedIn,
+}: IHeader) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   const handleClick = (event: React.MouseEvent<SVGElement>) => {
-    if (!props.isLoggedIn()) {
-      props.setShowMemberForm(!props.showMemberForm);
+    if (!isLoggedIn()) {
+      setShowMemberForm(!showMemberForm);
       event.preventDefault();
       event.stopPropagation();
     } else {
-      props.setGameRunning(false);
+      setGameRunning(false);
       navigate("/profile");
     }
   };
 
   const loginWrapperStyle = {
-    opacity: props.showMemberForm ? "1" : "0",
+    opacity: showMemberForm ? "1" : "0",
     transition: "opacity 0.2s ease-in-out",
   };
 
   const handleLogout = async () => {
     const callback = () => {
       localStorage.clear();
-      props.setUser({ access: "", refresh: "" });
+      setUser({ access: "", refresh: "" });
       navigate("/");
     };
     const refresh = localStorage.getItem("refresh");
@@ -62,7 +59,7 @@ const Header = (props: IHeaderProps) => {
         !target?.classList.contains("fa-user-circle") &&
         !target?.parentElement?.classList.contains("fa-user-circle")
       ) {
-        props.setShowMemberForm(false);
+        setShowMemberForm(false);
       }
     }
   };
@@ -79,13 +76,13 @@ const Header = (props: IHeaderProps) => {
     <div className="header-wrapper">
       <div
         className="header flex-center-center"
-        style={{ backgroundColor: props.theme }}
+        style={{ backgroundColor: theme }}
       >
         <div
           className="brand flex-center-center"
           onClick={() => {
             navigate("/");
-            props.setGameRunning(false);
+            setGameRunning(false);
           }}
         >
           <h1>AIM</h1>
@@ -94,7 +91,7 @@ const Header = (props: IHeaderProps) => {
         </div>
         <div className="links flex-center-center">
           {window.location.pathname !== "/" && (
-            <Link to="/" onClick={() => props.setGameRunning(false)}>
+            <Link to="/" onClick={() => setGameRunning(false)}>
               <FaHome />
             </Link>
           )}
@@ -103,9 +100,9 @@ const Header = (props: IHeaderProps) => {
           </Link>
           <div style={loginWrapperStyle} ref={dropdownRef}>
             <Login
-              theme={props.theme}
-              setUser={props.setUser}
-              setShowMemberForm={props.setShowMemberForm}
+              theme={theme}
+              setUser={setUser}
+              setShowMemberForm={setShowMemberForm}
             />
           </div>
           <a
@@ -122,7 +119,7 @@ const Header = (props: IHeaderProps) => {
           >
             <FaDev />
           </a>
-          {props.isLoggedIn() && (
+          {isLoggedIn() && (
             <FaSignOutAlt
               style={{ cursor: "pointer" }}
               onClick={handleLogout}
