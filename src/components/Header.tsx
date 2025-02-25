@@ -11,6 +11,7 @@ import { useRef, useEffect } from "react";
 import Login from "./Login";
 import { logout } from "../requests/user";
 import { IHeader } from "../types/component.types";
+import { HEADER_HEIGHT } from "../constants/style";
 
 const Header = ({
   theme,
@@ -37,6 +38,7 @@ const Header = ({
   const loginWrapperStyle = {
     opacity: showMemberForm ? "1" : "0",
     transition: "opacity 0.2s ease-in-out",
+    zIndex: showMemberForm ? "5" : "-1",
   };
 
   const handleLogout = async () => {
@@ -73,7 +75,7 @@ const Header = ({
   }, []);
 
   return (
-    <div className="header-wrapper">
+    <div className="header-wrapper" style={{ height: HEADER_HEIGHT.string }}>
       <div
         className="header flex-center-center"
         style={{ backgroundColor: theme }}

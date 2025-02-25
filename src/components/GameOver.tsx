@@ -17,6 +17,7 @@ import { IGrade } from "../types/score.types";
 import { useScreenshot } from "use-react-screenshot";
 import { SECONDS_PER_MINUTE } from "../constants/date";
 import { IGameOver } from "../types/component.types";
+import { getTimezoneOffset } from "../utils/util";
 
 const genericGrade = {
   name: "Generic Grade",
@@ -48,23 +49,23 @@ const GameOver = ({
 
   const getImage = () => takeScreenshot(resultRef.current);
 
-  const handleRetry = () => {
-    setGameOver(false);
-    setScore(0);
-    setSecs(gameLength);
+  const clear = () => {
     setSpm(0);
-    setStartTime(new Date().getTime());
+    setScore(0);
+    setGameOver(false);
+    setSecs(gameLength);
     setGrade(genericGrade);
   };
 
+  const handleRetry = () => {
+    clear();
+    setStartTime(new Date().getTime());
+  };
+
   const handleHome = () => {
-    setScore(0);
-    setSecs(gameLength);
-    setSpm(0);
+    clear();
     setStartTime(0);
     setGameRunning(false);
-    setGameOver(false);
-    setGrade(genericGrade);
     navigate("/");
   };
 
@@ -84,12 +85,12 @@ const GameOver = ({
     const finalResult =
       (score * (SECONDS_PER_MINUTE / gameLength)) / (targets + targetSize);
     const grade = gradeGetter(Math.round(finalResult)) as IGrade;
-    
+
     setGrade(grade);
 
     const _request = async () => {
       await postScore({
-        tz_offset: -(new Date().getTimezoneOffset() / SECONDS_PER_MINUTE),
+        tz_offset: getTimezoneOffset(),
         game_length: gameLength,
         target_size: targetSize,
         total_target: targets,

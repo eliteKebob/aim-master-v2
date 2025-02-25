@@ -70,6 +70,7 @@ const App = () => {
     targets: targets,
     targetSize: targetSize,
     clickToHit: clickToHit,
+    sensitivity: sensitivity,
     setGameRunning: setGameRunning,
     setShowMemberForm: setShowMemberForm,
   };
@@ -97,7 +98,6 @@ const App = () => {
                 setIsChallenge={setIsChallenge}
                 isLoggedIn={isLoggedIn}
                 setClickToHit={setClickToHit}
-                sensitivity={sensitivity}
                 setSensitivity={setSensitivity}
                 {...gameProps}
               />
@@ -116,7 +116,6 @@ const App = () => {
                 gameOver={gameOver}
                 setGameOver={setGameOver}
                 user={user}
-                sensitivity={sensitivity}
                 {...gameProps}
               />
             }

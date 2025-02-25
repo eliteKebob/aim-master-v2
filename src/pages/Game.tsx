@@ -5,51 +5,60 @@ import { useNavigate } from "react-router-dom";
 import { GameModes } from "../constants/scores";
 import {
   MILLISECONDS_PER_GAME,
-  MILLISECONDS_PER_MINUTE,
+  MILLISECONDS_PER_SECOND,
   SECONDS_PER_GAME,
   SECONDS_PER_MINUTE,
 } from "../constants/date";
 import { IGame, IMouseCoordinates } from "../types/component.types";
 import Scoreboard from "../components/Scoreboard";
 import Crosshair from "../assets/crosshair.png";
+import { _scroll, getTimezoneOffset, vhToPixels, vwToPixels } from "../utils/util";
+import { HEADER_HEIGHT } from "../constants/style";
+import PauseMenu from "../components/PauseMenu";
+import { throttle } from "lodash";
 
 const Game = ({
+  user,
+  theme,
   score,
   targetSize,
   gameOver,
   gameRunning,
   targets,
-  theme,
+  startTime,
+  isChallenge,
+  clickToHit,
+  sensitivity,
   setGameOver,
   setGameRunning,
   setScore,
   setShowMemberForm,
   setStartTime,
-  startTime,
-  isChallenge,
-  user,
-  clickToHit,
-  sensitivity,
 }: IGame) => {
   const game = useRef<HTMLDivElement>(null);
 
+  const defaultCoordinates: IMouseCoordinates = {
+    x: 0,
+    y: -vhToPixels(HEADER_HEIGHT.numeric),
+  };
+
+  const [isLocked, setIsLocked] = useState<boolean>(false);
   const [secs, setSecs] = useState<number>(SECONDS_PER_GAME);
   const [now, setNow] = useState<number>(0);
   const [spm, setSpm] = useState<number>(0);
-
-  const [position, setPosition] = useState<IMouseCoordinates>({ x: 0, y: 0 });
-  const [isLocked, setIsLocked] = useState<boolean>(false);
-  const [aimed, setAimed] = useState<IMouseCoordinates>({ x: 0, y: 0 });
+  const [position, setPosition] =
+    useState<IMouseCoordinates>(defaultCoordinates);
+  const [aimed, setAimed] = useState<IMouseCoordinates>(defaultCoordinates);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!gameRunning) {
+    if (!gameRunning && !gameOver) {
       navigate("/");
     }
     setShowMemberForm(false);
     setStartTime(new Date().getTime());
-    if (isChallenge === true) {
+    if (isChallenge) {
       setScore(0);
       setSpm(0);
     }
@@ -57,7 +66,8 @@ const Game = ({
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    _scroll(vhToPixels(HEADER_HEIGHT.numeric));
+    const handleMouseMove = throttle((e: MouseEvent) => {
       setPosition((prev) => {
         const coordinates = {
           x: prev.x + e.movementX * sensitivity,
@@ -65,7 +75,8 @@ const Game = ({
         };
         return coordinates;
       });
-    };
+    }, 1); // make this 1 value as performance setting
+
     const handleAim = (e: MouseEvent) => {
       setPosition((prev) => {
         const coordinates = { x: prev.x, y: prev.y };
@@ -77,6 +88,7 @@ const Game = ({
     clickToHit && document.addEventListener("click", handleAim);
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
+      handleMouseMove.cancel();
       clickToHit && document.removeEventListener("click", handleAim);
     };
     // eslint-disable-next-line
@@ -97,7 +109,7 @@ const Game = ({
       setNow(new Date().getTime());
       clearInterval(x);
     }
-  }, 1000);
+  }, MILLISECONDS_PER_SECOND);
 
   useEffect(() => {
     if (isChallenge) {
@@ -106,12 +118,12 @@ const Game = ({
       if (countDownDate !== distance) {
         setSecs(
           Math.floor(
-            (distance % MILLISECONDS_PER_GAME) / MILLISECONDS_PER_MINUTE
+            (distance % MILLISECONDS_PER_GAME) / MILLISECONDS_PER_SECOND
           )
         );
       }
     } else {
-      setSecs(Math.floor((now - startTime) / MILLISECONDS_PER_MINUTE));
+      setSecs(Math.floor((now - startTime) / MILLISECONDS_PER_SECOND));
     }
     // eslint-disable-next-line
   }, [now]);
@@ -133,7 +145,7 @@ const Game = ({
         localStorage.setItem(
           GameModes.Chill,
           JSON.stringify({
-            tz_offset: -(new Date().getTimezoneOffset() / SECONDS_PER_MINUTE),
+            tz_offset: getTimezoneOffset(),
             game_length: secs,
             target_size: targetSize,
             total_target: targets,
@@ -164,16 +176,23 @@ const Game = ({
   const handleClick = (e: React.MouseEvent) => {
     if (isLocked) {
       document.exitPointerLock();
-    } else if (game.current) {
-      setPosition({ x: e.clientX, y: e.clientY });
+      setGameRunning(false)
+    } else if (game?.current) {
+      // centering crosshair
+      setPosition({
+        x: vwToPixels(50),
+        y: vhToPixels(50 + HEADER_HEIGHT.numeric),
+      });
       game.current.requestPointerLock({
         unadjustedMovement: true,
       });
+      setGameRunning(true)
     }
   };
 
   return (
     <div className="game-wrapper" id="game-table">
+      <PauseMenu theme={theme} gameRunning={gameRunning} />
       <Scoreboard
         score={score}
         secs={secs}
@@ -183,23 +202,23 @@ const Game = ({
       />
       {gameOver ? (
         <GameOver
-          setGameOver={setGameOver}
           score={score}
           theme={theme}
-          targetSize={targetSize}
           targets={targets}
-          setScore={setScore}
-          setSecs={setSecs}
+          targetSize={targetSize}
+          gameLength={SECONDS_PER_GAME}
           setSpm={setSpm}
+          setSecs={setSecs}
+          setScore={setScore}
+          setGameOver={setGameOver}
           setStartTime={setStartTime}
           setGameRunning={setGameRunning}
-          gameLength={SECONDS_PER_GAME}
         />
       ) : (
         <>
           <div id="game" ref={game}>
             <p onClick={handleClick} style={{ cursor: "pointer" }}>
-              {isLocked ? "Pointer Locked" : "Click to Lock Pointer"}
+              {isLocked ? "Pause" : "Resume"}
             </p>
             {isLocked && (
               <img

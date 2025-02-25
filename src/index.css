@@ -7,7 +7,7 @@
   font-family: 'Anybody', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
 }
 
 body {
@@ -149,7 +149,6 @@ h1 {
 
 .header-wrapper {
   width: 100vw;
-  height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -378,5 +377,23 @@ h1 {
   align-items: center;
   height: 100%;
   width: 50%;
+}
+
+.pause-menu-wrapper {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: #181818;
+  transition: opacity ease-in-out 0.2s;
+}
+
+.pause-menu-wrapper.active {
+  opacity: 1;
+  z-index: 999;
+}
+
+.pause-menu-wrapper.passive {
+  opacity: 0;
+  z-index: -999;
 }
  

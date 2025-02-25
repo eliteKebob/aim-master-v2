@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ISingleTarget } from "../types/component.types";
 import { calculateTopRight } from "../utils/formulas";
+import { vhToPixels } from "../utils/util";
+import { HEADER_HEIGHT } from "../constants/style";
 
 const SingleTarget = ({
   targetSize,
@@ -72,11 +74,12 @@ const SingleTarget = ({
   useEffect(() => {
     if (clickToHit && target?.current) {
       const rect = target?.current.getBoundingClientRect();
+      const y = aimed.y - vhToPixels(HEADER_HEIGHT.numeric);
       if (
         aimed.x >= rect.left &&
         aimed.x <= rect.right &&
-        aimed.y >= rect.top &&
-        aimed.y <= rect.bottom
+        y >= rect.top &&
+        y <= rect.bottom
       ) {
         if (gameRunning && !gameOver) {
           stylist();

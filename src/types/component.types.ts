@@ -126,3 +126,7 @@ export interface ICustomizeMouse extends WithTheme {
   setClickToHit: SetState<boolean>;
   clickToHit: boolean;
 }
+
+export interface IPauseMenu extends WithTheme {
+  gameRunning: boolean;
+}
