@@ -65,11 +65,11 @@ export interface ISetTheme extends WithTheme {
 
 export interface ISingleTarget extends WithTheme, WithGameConfig {
   setScore: SetState<number>;
-  score: number;
   gameRunning: boolean;
   gameOver: boolean;
   targetSize: number;
   position: any;
+  aimed: any;
 }
 
 export interface IStartGame extends WithTheme, WithGameState {
@@ -109,6 +109,20 @@ export interface ILanding
   clearGameSession: () => void;
   isLoggedIn: () => boolean;
   setShowMemberForm: SetState<boolean>;
+  sensitivity: number;
+  setSensitivity: SetState<number>;
 }
 
 export interface IProfile extends WithTheme {}
+
+export interface IMouseCoordinates {
+  x: number;
+  y: number;
+}
+
+export interface ICustomizeMouse extends WithTheme {
+  sensitivity: number;
+  setSensitivity: SetState<number>;
+  setClickToHit: SetState<boolean>;
+  clickToHit: boolean;
+}

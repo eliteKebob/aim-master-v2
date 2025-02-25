@@ -3,12 +3,14 @@ import SetTheme from "../components/SetTheme";
 import CustomizeTargets from "../components/CustomizeTargets";
 import StartGame from "../components/StartGame";
 import { ILanding } from "../types/component.types";
+import CustomizeMouse from "../components/CustomizeMouse";
 
 const Landing = ({
   targetSize,
   targets,
   theme,
   clickToHit,
+  sensitivity,
   setGameRunning,
   setIsChallenge,
   setShowMemberForm,
@@ -18,15 +20,12 @@ const Landing = ({
   clearGameSession,
   isLoggedIn,
   setClickToHit,
+  setSensitivity,
 }: ILanding) => {
   useEffect(() => {
     clearGameSession();
     // eslint-disable-next-line
   }, []);
-
-  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setClickToHit(e.target.checked);
-  };
 
   return (
     <div className="landing flex-center-center">
@@ -39,14 +38,13 @@ const Landing = ({
         setTargets={setTargets}
       />
       <SetTheme theme={theme} setTheme={setTheme} />
-      <p>Mouse click to hit targets?</p>
-      <label
-        className="switch"
-        style={{ marginTop: "1vh", "--color-button": theme }}
-      >
-        <input type="checkbox" onChange={handleCheckbox} checked={clickToHit} />
-        <span className="slider"></span>
-      </label>
+      <CustomizeMouse
+        sensitivity={sensitivity}
+        setClickToHit={setClickToHit}
+        setSensitivity={setSensitivity}
+        clickToHit={clickToHit}
+        theme={theme}
+      />
       <StartGame
         theme={theme}
         isLoggedIn={isLoggedIn}

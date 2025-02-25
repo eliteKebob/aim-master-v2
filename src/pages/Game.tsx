@@ -9,7 +9,7 @@ import {
   SECONDS_PER_GAME,
   SECONDS_PER_MINUTE,
 } from "../constants/date";
-import { IGame } from "../types/component.types";
+import { IGame, IMouseCoordinates } from "../types/component.types";
 import Scoreboard from "../components/Scoreboard";
 import Crosshair from "../assets/crosshair.png";
 
@@ -33,13 +33,13 @@ const Game = ({
 }: IGame) => {
   const game = useRef<HTMLDivElement>(null);
 
-  const [targetsArr, setTargetsArr] = useState<number[]>([...Array(targets)]);
   const [secs, setSecs] = useState<number>(SECONDS_PER_GAME);
   const [now, setNow] = useState<number>(0);
   const [spm, setSpm] = useState<number>(0);
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState<IMouseCoordinates>({ x: 0, y: 0 });
   const [isLocked, setIsLocked] = useState<boolean>(false);
+  const [aimed, setAimed] = useState<IMouseCoordinates>({ x: 0, y: 0 });
 
   const navigate = useNavigate();
 
@@ -58,14 +58,26 @@ const Game = ({
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition((prev) => ({
-        x: prev.x + e.movementX * sensitivity,
-        y: prev.y + e.movementY * sensitivity,
-      }));
+      setPosition((prev) => {
+        const coordinates = {
+          x: prev.x + e.movementX * sensitivity,
+          y: prev.y + e.movementY * sensitivity,
+        };
+        return coordinates;
+      });
+    };
+    const handleAim = (e: MouseEvent) => {
+      setPosition((prev) => {
+        const coordinates = { x: prev.x, y: prev.y };
+        setAimed(coordinates);
+        return coordinates;
+      });
     };
     document.addEventListener("mousemove", handleMouseMove);
+    clickToHit && document.addEventListener("click", handleAim);
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
+      clickToHit && document.removeEventListener("click", handleAim);
     };
     // eslint-disable-next-line
   }, []);
@@ -153,8 +165,10 @@ const Game = ({
     if (isLocked) {
       document.exitPointerLock();
     } else if (game.current) {
-      setPosition({x: e.clientX, y:e.clientY})
-      game.current.requestPointerLock();
+      setPosition({ x: e.clientX, y: e.clientY });
+      game.current.requestPointerLock({
+        unadjustedMovement: true,
+      });
     }
   };
 
@@ -202,17 +216,17 @@ const Game = ({
                 }}
               ></img>
             )}
-            {targetsArr?.map((_, idx) => (
+            {[...Array(targets)]?.map((_, idx) => (
               <SingleTarget
                 key={idx}
                 targetSize={targetSize}
                 setScore={setScore}
-                score={score}
                 gameRunning={gameRunning}
                 theme={theme}
                 gameOver={gameOver}
                 clickToHit={clickToHit}
                 position={position}
+                aimed={aimed}
               />
             ))}
           </div>

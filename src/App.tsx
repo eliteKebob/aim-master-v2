@@ -18,11 +18,11 @@ const App = () => {
   const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [isChallenge, setIsChallenge] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number>(0);
-  const [sensitivity, setSensitivity] = useState<number>(0.5);
+  const [sensitivity, setSensitivity] = useState<number>(1);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [user, setUser] = useState<IAuthResponse>({ access: "", refresh: "" });
   const [showMemberForm, setShowMemberForm] = useState<boolean>(false);
-  const [clickToHit, setClickToHit] = useState<boolean>(false);
+  const [clickToHit, setClickToHit] = useState<boolean>(true);
 
   const root = document.getElementById("root");
   root && (root.style.color = theme);
@@ -97,6 +97,8 @@ const App = () => {
                 setIsChallenge={setIsChallenge}
                 isLoggedIn={isLoggedIn}
                 setClickToHit={setClickToHit}
+                sensitivity={sensitivity}
+                setSensitivity={setSensitivity}
                 {...gameProps}
               />
             }
