@@ -1,15 +1,9 @@
 import { useState } from "react";
 import { register, login } from "../requests/user";
-import { Themes } from "../constants/themes";
-import { IAuthRequest, IAuthResponse } from "../types/auth.types";
+import { IAuthRequest } from "../types/auth.types";
+import { ILogin } from "../types/component.types";
 
-type ILoginProps = {
-  theme: Themes;
-  setUser: React.Dispatch<React.SetStateAction<IAuthResponse>>;
-  setShowMemberForm: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const Login = (props: ILoginProps) => {
+const Login = ({ theme, setUser, setShowMemberForm }: ILogin) => {
   const [formData, setFormData] = useState<IAuthRequest>({
     username: "",
     password: "",
@@ -21,13 +15,13 @@ const Login = (props: ILoginProps) => {
   };
 
   const handleSubmit = async () => {
-    props.setShowMemberForm(false);
-    isMember ? await login(formData, props.setUser) : await register(formData);
+    setShowMemberForm(false);
+    isMember ? await login(formData, setUser) : await register(formData);
     setFormData({ username: "", password: "" });
   };
 
   return (
-    <div className="login-wrapper" style={{ borderColor: props.theme }}>
+    <div className="login-wrapper" style={{ borderColor: theme }}>
       <div className="login">
         <input
           type="text"

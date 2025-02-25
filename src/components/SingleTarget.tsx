@@ -1,51 +1,106 @@
-import { useEffect, useRef } from "react";
-import { Themes } from "../constants/themes";
+import { useEffect, useRef, useState } from "react";
+import { ISingleTarget } from "../types/component.types";
+import { calculateTopRight } from "../utils/formulas";
+import { vhToPixels } from "../utils/util";
+import { HEADER_HEIGHT } from "../constants/style";
 
-type ISingleTarget = {
-  targetSize: number;
-  gameRunning: boolean;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
-  score: number;
-  theme: Themes;
-  gameOver: boolean;
-};
+const SingleTarget = ({
+  targetSize,
+  gameRunning,
+  theme,
+  gameOver,
+  clickToHit,
+  position,
+  aimed,
+  setScore,
+}: ISingleTarget) => {
+  const target = useRef<HTMLDivElement | null>(null);
+  const [overlapping, setOverlapping] = useState<boolean>(false);
 
-const SingleTarget = (props: ISingleTarget) => {
-  let targetRef = useRef<HTMLDivElement | null>(null);
-  const handleHover = () => {
-    if (props.gameRunning && !props.gameOver) {
-      stylist();
-      props.setScore(props.score + 1);
-    } else {
-      return;
+  // const handleTargetHit = (e: React.MouseEvent<HTMLDivElement>) => {
+  //   const hit = () => {
+  //     if (gameRunning && !gameOver) {
+  //       stylist();
+  //       setScore(score + 1);
+  //     }
+  //   };
+  //   switch (e.type) {
+  //     case "click":
+  //       clickToHit && hit();
+  //       break;
+  //     case "mouseover":
+  //       !clickToHit && hit();
+  //       break;
+  //   }
+  // };
+
+  const stylist = () => {
+    if (target?.current) {
+      const { top, right } = calculateTopRight();
+      target.current.style.top = `${top}%`;
+      target.current.style.right = `${right}%`;
     }
   };
 
-  const stylist = () => {
-    const rndTop = Math.floor(Math.random() * 77) + 20;
-    const rndRight = Math.floor(Math.random() * 91) + 5;
-    targetRef?.current && (targetRef.current.style.top = `${rndTop}%`);
-    targetRef?.current && (targetRef.current.style.right = `${rndRight}%`);
-  };
-
   useEffect(() => {
-    if (props.gameRunning) {
+    if (gameRunning) {
       stylist();
-    } else {
-      return;
     }
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    if (target?.current) {
+      if (!clickToHit) {
+        const rect = target?.current.getBoundingClientRect();
+        if (
+          position.x >= rect.left &&
+          position.x <= rect.right &&
+          position.y >= rect.top &&
+          position.y <= rect.bottom
+        ) {
+          if (gameRunning && !gameOver && !overlapping) {
+            setOverlapping(true);
+            stylist();
+            setScore((prev) => prev + 1);
+          }
+          setOverlapping(false);
+        }
+      }
+    }
+    // eslint-disable-next-line
+  }, [position]);
+
+  useEffect(() => {
+    if (clickToHit && target?.current) {
+      const rect = target?.current.getBoundingClientRect();
+      const y = aimed.y - vhToPixels(HEADER_HEIGHT.numeric);
+      if (
+        aimed.x >= rect.left &&
+        aimed.x <= rect.right &&
+        y >= rect.top &&
+        y <= rect.bottom
+      ) {
+        if (gameRunning && !gameOver) {
+          stylist();
+          setScore((prev) => prev + 1);
+        }
+      }
+    }
+    // eslint-disable-next-line
+  }, [aimed]);
+
   return (
     <div
       className="single-target"
-      ref={targetRef}
-      onMouseOver={() => handleHover()}
+      ref={target}
+      // onMouseOver={(e) => handleTargetHit(e)}
+      // onClick={(e) => handleTargetHit(e)}
       style={{
-        width: `${props.targetSize}vh`,
-        height: `${props.targetSize}vh`,
-        backgroundColor: props.theme,
+        width: `${targetSize}vh`,
+        height: `${targetSize}vh`,
+        backgroundColor: theme,
+        zIndex: "5",
       }}
     ></div>
   );
