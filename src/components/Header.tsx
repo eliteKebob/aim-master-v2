@@ -20,6 +20,7 @@ const Header = ({
   setUser,
   showMemberForm,
   isLoggedIn,
+  gameRunning
 }: IHeader) => {
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -75,7 +76,7 @@ const Header = ({
   }, []);
 
   return (
-    <div className="header-wrapper" style={{ height: HEADER_HEIGHT.string }}>
+    <div className={"header-wrapper " + (gameRunning && "passive")} style={{ height: HEADER_HEIGHT.string }}>
       <div
         className="header flex-center-center"
         style={{ backgroundColor: theme }}

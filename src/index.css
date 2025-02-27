@@ -109,6 +109,8 @@ h1 {
 .game-wrapper {
   width: 100vw;
   height: 100vh;
+  position: absolute;
+  top: 0;
 }
 
 .scoreboard {
@@ -153,6 +155,13 @@ h1 {
   justify-content: center;
   align-items: center;
   background-color: #181818;
+  opacity: 1;
+  transition: 0.2s opacity ease-in-out;
+}
+
+.header-wrapper.passive {
+  opacity: 0;
+  z-index: -5;
 }
 
 .login-wrapper {
@@ -382,9 +391,11 @@ h1 {
 .pause-menu-wrapper {
   position: absolute;
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   background-color: #181818;
   transition: opacity ease-in-out 0.2s;
+  top: 10vh;
+  overflow: hidden;
 }
 
 .pause-menu-wrapper.active {
@@ -397,3 +408,10 @@ h1 {
   z-index: -999;
 }
  
+.crosshair {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  width: 20px;
+}

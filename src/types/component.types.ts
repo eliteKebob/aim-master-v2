@@ -55,6 +55,7 @@ export interface IGameOver extends WithTheme, WithGameState, Target {
 export interface IHeader extends WithTheme, WithAuth, WithGameState {
   showMemberForm: boolean;
   isLoggedIn: () => boolean;
+  gameRunning: boolean;
 }
 
 export interface ILogin extends WithTheme, WithAuth {}
@@ -120,11 +121,35 @@ export interface IMouseCoordinates {
   y: number;
 }
 
-export interface ICustomizeMouse extends WithTheme {
+export interface IStoppage {
+  start: number;
+  end: number;
+  total: number;
+}
+
+export interface IMouseMove {
   sensitivity: number;
+  clickToHit: boolean;
+}
+
+export interface ITime {
+  gameOver: boolean;
+  gameRunning: boolean;
+  isChallenge: boolean;
+  startTime: number;
+}
+
+export interface ISpm {
+  isChallenge: boolean;
+  score: number;
+  secs: number;
+}
+
+export interface IPointerLock extends WithGameState {}
+
+export interface ICustomizeMouse extends WithTheme, IMouseMove {
   setSensitivity: SetState<number>;
   setClickToHit: SetState<boolean>;
-  clickToHit: boolean;
 }
 
 export interface IPauseMenu extends WithTheme {

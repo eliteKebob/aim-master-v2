@@ -85,6 +85,7 @@ const App = () => {
           setShowMemberForm={setShowMemberForm}
           setGameRunning={setGameRunning}
           isLoggedIn={isLoggedIn}
+          gameRunning={gameRunning}
         />
         <Routes>
           <Route
