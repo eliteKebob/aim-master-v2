@@ -2,7 +2,7 @@ import { FaCrosshairs, FaClock, FaFireAlt } from "react-icons/fa";
 import { SECONDS_PER_GAME } from "../constants/date";
 import { IScoreboard } from "../types/component.types";
 
-const Scoreboard = ({ secs, isChallenge, theme, score, spm }: IScoreboard) => {
+const Scoreboard = ({ secs, isChallenge, theme, score, spm, gameRunning }: IScoreboard) => {
   const determineSecondsToRender = (): number => {
     if (isChallenge) {
       if (secs + 1 >= SECONDS_PER_GAME) {
@@ -12,9 +12,10 @@ const Scoreboard = ({ secs, isChallenge, theme, score, spm }: IScoreboard) => {
     }
     return secs;
   };
+
   return (
     <div
-      className="scoreboard flex-center-center"
+      className={"scoreboard flex-center-center " + (gameRunning ? "active" : "passive")}
       style={{ borderBottom: `0.5vh solid ${theme}` }}
     >
       <div className="score-count flex-center-center">

@@ -16,36 +16,41 @@ const CustomizeMouse = ({
     setSensitivity(parseFloat(e.target.value));
   };
   return (
-    <div>
-      <p>Mouse click to hit targets?</p>
-      <label
-        className="switch"
-        style={{ marginTop: "1vh", "--color-button": theme }}
-      >
-        <input type="checkbox" onChange={handleCheckbox} checked={clickToHit} />
-        <span className="slider"></span>
-      </label>
-      <p style={{ marginTop: "1vh" }}>
-        Sensitivity{" "}
+    <div className="customize-mouse flex-center-center">
+      <div className="flex-center-center">
+        <p>Mouse click to hit targets?</p>
+        <label className="switch" style={{ "--color-button": theme }}>
+          <input
+            type="checkbox"
+            onChange={handleCheckbox}
+            checked={clickToHit}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+      <div className="flex-center-center">
+        <p>
+          Sensitivity{" "}
+          <input
+            type="number"
+            value={sensitivity}
+            onChange={handleSens}
+            max="10"
+            min="0.1"
+            step="0.1"
+            style={{ backgroundColor: theme }}
+          />
+        </p>
         <input
-          type="number"
-          value={sensitivity}
-          onChange={handleSens}
-          max="10"
+          type="range"
           min="0.1"
+          max="10"
+          value={sensitivity}
           step="0.1"
-          style={{ backgroundColor: theme }}
+          onChange={handleSens}
+          style={{ color: theme }}
         />
-      </p>
-      <input
-        type="range"
-        min="0.1"
-        max="10"
-        value={sensitivity}
-        step="0.1"
-        onChange={handleSens}
-        style={{ color: theme }}
-      />
+      </div>
     </div>
   );
 };

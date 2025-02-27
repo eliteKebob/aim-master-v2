@@ -7,6 +7,11 @@ const usePointerLock = ({ setGameRunning }: IPointerLock) => {
   const [isLocked, setIsLocked] = useState<boolean>(false);
 
   useEffect(() => {
+    if (game?.current) {
+      game.current.requestPointerLock({
+        unadjustedMovement: true,
+      });
+    }
     const handleLockChange = () => {
       setIsLocked(document.pointerLockElement === game?.current);
       setGameRunning(document.pointerLockElement === game?.current);

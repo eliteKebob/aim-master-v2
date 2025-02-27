@@ -84,6 +84,7 @@ export interface IScoreboard extends WithTheme {
   secs: number;
   spm: number;
   isChallenge: boolean;
+  gameRunning: boolean;
 }
 
 export interface IGame
@@ -130,6 +131,7 @@ export interface IStoppage {
 export interface IMouseMove {
   sensitivity: number;
   clickToHit: boolean;
+  gameRunning: boolean;
 }
 
 export interface ITime {
@@ -147,11 +149,14 @@ export interface ISpm {
 
 export interface IPointerLock extends WithGameState {}
 
-export interface ICustomizeMouse extends WithTheme, IMouseMove {
+export interface ICustomizeMouse extends WithTheme {
   setSensitivity: SetState<number>;
   setClickToHit: SetState<boolean>;
+  sensitivity: number;
+  clickToHit: boolean;
 }
 
 export interface IPauseMenu extends WithTheme {
   gameRunning: boolean;
+  resumeFn: () => void;
 }

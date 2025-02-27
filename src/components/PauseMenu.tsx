@@ -1,17 +1,13 @@
-import { useEffect } from "react";
 import { IPauseMenu } from "../types/component.types";
 
-const PauseMenu = ({ gameRunning, theme }: IPauseMenu) => {
-  useEffect(() => {
-    console.log("game paused")
-    // eslint-disable-next-line
-  }, [gameRunning]);
+const PauseMenu = ({ gameRunning, theme, resumeFn }: IPauseMenu) => {
 
   return (
     <div
-      className={"pause-menu-wrapper " + (!gameRunning ? "active" : "passive")}
+      className={"pause-menu-wrapper flex-center-center " + (!gameRunning ? "active" : "passive")}
     >
-      PauseMenu
+      <h1>Paused</h1>
+      <p style={{backgroundColor: theme}} onClick={resumeFn}>Continue</p>
     </div>
   );
 };

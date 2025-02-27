@@ -15,21 +15,21 @@ import { HEADER_HEIGHT } from "../constants/style";
 
 const Header = ({
   theme,
+  showMemberForm,
+  gameRunning,
   setGameRunning,
   setShowMemberForm,
   setUser,
-  showMemberForm,
   isLoggedIn,
-  gameRunning
 }: IHeader) => {
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleClick = (event: React.MouseEvent<SVGElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (!isLoggedIn()) {
       setShowMemberForm(!showMemberForm);
-      event.preventDefault();
-      event.stopPropagation();
     } else {
       setGameRunning(false);
       navigate("/profile");
@@ -76,7 +76,10 @@ const Header = ({
   }, []);
 
   return (
-    <div className={"header-wrapper " + (gameRunning && "passive")} style={{ height: HEADER_HEIGHT.string }}>
+    <div
+      className={"header-wrapper " + (gameRunning ? "passive" : "")}
+      style={{ height: HEADER_HEIGHT.string }}
+    >
       <div
         className="header flex-center-center"
         style={{ backgroundColor: theme }}

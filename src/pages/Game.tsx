@@ -38,6 +38,7 @@ const Game = ({
   const [aimed, position, setPosition] = useMouseMove({
     sensitivity: sensitivity,
     clickToHit: clickToHit,
+    gameRunning: gameRunning
   });
 
   const [now, secs, setSecs] = useTime({
@@ -92,16 +93,16 @@ const Game = ({
     // eslint-disable-next-line
   }, [secs]);
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleContinue = () => {
     if (isLocked) {
       document.exitPointerLock();
       setGameRunning(false);
     } else if (game?.current) {
       // centering crosshair
-      setPosition({
-        x: vwToPixels(50),
-        y: vhToPixels(50),
-      });
+      setPosition((prev) => ({
+        x: prev.x !== 0 ? prev.x : vwToPixels(50),
+        y: prev.y !== 0 ? prev.y : vhToPixels(50),
+      }));
       game.current.requestPointerLock({
         unadjustedMovement: true,
       });
@@ -111,13 +112,14 @@ const Game = ({
 
   return (
     <div className="game-wrapper" id="game-table">
-      <PauseMenu theme={theme} gameRunning={gameRunning} />
+      <PauseMenu theme={theme} gameRunning={gameRunning} resumeFn={handleContinue} />
       <Scoreboard
         score={score}
         secs={secs}
         spm={spm}
         isChallenge={isChallenge}
         theme={theme}
+        gameRunning={gameRunning}
       />
       {gameOver ? (
         <GameOver
@@ -136,9 +138,6 @@ const Game = ({
       ) : (
         <>
           <div id="game" ref={game}>
-            <p onClick={handleClick} style={{ cursor: "pointer" }}>
-              {isLocked ? "Pause" : "Resume"}
-            </p>
             {isLocked && (
               <img
                 className="crosshair"
