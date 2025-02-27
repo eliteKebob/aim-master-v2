@@ -1,182 +1,169 @@
-import SingleTarget from "../components/SingleTarget";
-import { useState, useEffect } from "react";
-import { FaClock, FaCrosshairs, FaFireAlt } from "react-icons/fa";
-import GameOver from "../components/GameOver";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { MILLISECONDS_PER_GAME, SECONDS_PER_GAME } from "../constants/date";
 import { GameModes } from "../constants/scores";
-import { Themes } from "../constants/themes";
-import { IAuthResponse } from "../types/auth.types";
+import { IGame } from "../types/component.types";
+import SingleTarget from "../components/SingleTarget";
+import GameOver from "../components/GameOver";
+import Scoreboard from "../components/Scoreboard";
+import PauseMenu from "../components/PauseMenu";
+import Crosshair from "../assets/crosshair.png";
+import { getTimezoneOffset, vhToPixels, vwToPixels } from "../utils/util";
+import { saveLocalSession } from "../helpers/game";
+import useMouseMove from "../hooks/useMouseMove";
+import useTime from "../hooks/useTime";
+import useSpm from "../hooks/useSpm";
+import usePointerLock from "../hooks/usePointerLock";
 
-type IGameProps = {
-  score: number;
-  targetSize: number;
-  gameRunning: boolean;
-  theme: Themes;
-  targets: number;
-  startTime: number;
-  isChallenge: boolean;
-  gameOver: boolean;
-  setStartTime: React.Dispatch<React.SetStateAction<number>>;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
-  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
-  setGameRunning: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowMemberForm: React.Dispatch<React.SetStateAction<boolean>>;
-  user: IAuthResponse;
-};
-
-const Game = (props: IGameProps) => {
-  const [targetsArr, setTargetsArr] = useState([0, 1, 2, 3, 4, 5, 6]); // default 7 targets
-  const [secs, setSecs] = useState(5);
-  const [now, setNow] = useState(0);
-  const [spm, setSpm] = useState(0);
-
+const Game = ({
+  user,
+  theme,
+  score,
+  targetSize,
+  gameOver,
+  gameRunning,
+  targets,
+  startTime,
+  isChallenge,
+  clickToHit,
+  sensitivity,
+  setGameOver,
+  setGameRunning,
+  setScore,
+  setShowMemberForm,
+  setStartTime,
+}: IGame) => {
   const navigate = useNavigate();
 
-  const SECONDS_PER_GAME = 30;
-  const MILLISECONDS_PER_MINUTE = 1000;
-  const MILLISECONDS_PER_GAME = SECONDS_PER_GAME * MILLISECONDS_PER_MINUTE;
-  const SECONDS_PER_MINUTE = 60;
+  const [aimed, position, setPosition] = useMouseMove({
+    sensitivity: sensitivity,
+    clickToHit: clickToHit,
+  });
+
+  const [now, secs, setSecs] = useTime({
+    gameOver: gameOver,
+    startTime: startTime,
+    isChallenge: isChallenge,
+    gameRunning: gameRunning,
+  });
+
+  const [spm, setSpm] = useSpm({
+    isChallenge: isChallenge,
+    score: score,
+    secs: secs,
+  });
+
+  const [isLocked, game] = usePointerLock({
+    setGameRunning: setGameRunning,
+  });
 
   useEffect(() => {
-    if (!props.gameRunning) {
+    if (!gameRunning && !gameOver) {
       navigate("/");
     }
-    props.setShowMemberForm(false);
-    props.setStartTime(new Date().getTime());
-    if (props.isChallenge === true) {
-      props.setScore(0);
-      setSpm(0);
+    setShowMemberForm(false);
+    setStartTime(Date.now());
+    if (isChallenge) {
+      setScore(0);
     }
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    let newTargetsArr = [];
-    for (let i = 0; i < props.targets; i++) newTargetsArr.push(i);
-    setTargetsArr(newTargetsArr);
-    // eslint-disable-next-line
-  }, [props.targets]);
-
-  var x = setInterval(function () {
-    if (!props.gameOver) {
-      setNow(new Date().getTime());
-      clearInterval(x);
-    }
-  }, 1000);
-
-  useEffect(() => {
-    if (props.isChallenge) {
-      let countDownDate = props.startTime + MILLISECONDS_PER_GAME;
-      let distance = countDownDate - now;
-      setSecs(
-        Math.floor((distance % MILLISECONDS_PER_GAME) / MILLISECONDS_PER_MINUTE)
-      );
-    } else {
-      setSecs(Math.floor((now - props.startTime) / MILLISECONDS_PER_MINUTE));
+    if (!isChallenge && user && score > 0) {
+      saveLocalSession({
+        mode: GameModes.Chill,
+        tz_offset: getTimezoneOffset(),
+        game_length: secs,
+        target_size: targetSize,
+        total_target: targets,
+        target_hit: score,
+      });
     }
     // eslint-disable-next-line
-  }, [now]);
+  }, [score]);
 
   useEffect(() => {
-    if (props.isChallenge === true) {
-      if (secs > 0) {
-        setSpm(
-          Math.floor(
-            (props.score / (SECONDS_PER_GAME + 1 - secs)) * SECONDS_PER_MINUTE
-          )
-        );
-      } else {
-        setSpm(0);
-        return;
-      }
-    } else {
-      if (props.score > 0 && props.user) {
-        localStorage.setItem(
-          "chill",
-          JSON.stringify({
-            tz_offset: -(new Date().getTimezoneOffset() / SECONDS_PER_MINUTE),
-            game_length: secs,
-            target_size: props.targetSize,
-            total_target: props.targets,
-            target_hit: props.score,
-            mode: GameModes.Chill,
-          })
-        );
-      }
-    }
-    // eslint-disable-next-line
-  }, [props.score]);
-
-  useEffect(() => {
-    if (props.isChallenge === true) {
-      if (now - props.startTime > MILLISECONDS_PER_GAME) {
-        props.setGameOver(true);
-      }
-    } else {
-      if (props.score > 0 && secs > 0) {
-        setSpm(Math.floor((props.score / secs) * SECONDS_PER_MINUTE));
-      } else {
-        setSpm(0);
+    if (isChallenge) {
+      if (now - startTime > MILLISECONDS_PER_GAME) {
+        setGameOver(true);
       }
     }
     // eslint-disable-next-line
   }, [secs]);
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (isLocked) {
+      document.exitPointerLock();
+      setGameRunning(false);
+    } else if (game?.current) {
+      // centering crosshair
+      setPosition({
+        x: vwToPixels(50),
+        y: vhToPixels(50),
+      });
+      game.current.requestPointerLock({
+        unadjustedMovement: true,
+      });
+      setGameRunning(true);
+    }
+  };
+
   return (
     <div className="game-wrapper" id="game-table">
-      <div
-        className="scoreboard flex-center-center"
-        style={{ borderBottom: `0.5vh solid ${props.theme}` }}
-      >
-        <div className="score-count flex-center-center">
-          <FaCrosshairs /> {props.score}
-        </div>
-        <>
-          {secs >= 0 ? (
-            <div className="countdown flex-center-center">
-              <FaClock />{" "}
-              {props.isChallenge
-                ? secs + 1 > SECONDS_PER_GAME
-                  ? SECONDS_PER_GAME
-                  : secs + 1
-                : secs}
-              s
-            </div>
-          ) : (
-            ""
-          )}
-          <div className="spm-count flex-center-center">
-            <FaFireAlt /> {spm} SPM
-          </div>
-        </>
-      </div>
-      {props.gameOver ? (
+      <PauseMenu theme={theme} gameRunning={gameRunning} />
+      <Scoreboard
+        score={score}
+        secs={secs}
+        spm={spm}
+        isChallenge={isChallenge}
+        theme={theme}
+      />
+      {gameOver ? (
         <GameOver
-          setGameOver={props.setGameOver}
-          score={props.score}
-          theme={props.theme}
-          targetSize={props.targetSize}
-          targets={props.targets}
-          setScore={props.setScore}
-          setSecs={setSecs}
-          setSpm={setSpm}
-          setStartTime={props.setStartTime}
-          setGameRunning={props.setGameRunning}
+          score={score}
+          theme={theme}
+          targets={targets}
+          targetSize={targetSize}
           gameLength={SECONDS_PER_GAME}
+          setSpm={setSpm}
+          setSecs={setSecs}
+          setScore={setScore}
+          setGameOver={setGameOver}
+          setStartTime={setStartTime}
+          setGameRunning={setGameRunning}
         />
       ) : (
         <>
-          {targetsArr?.map((_, idx) => (
-            <SingleTarget
-              key={idx}
-              targetSize={props.targetSize}
-              setScore={props.setScore}
-              score={props.score}
-              gameRunning={props.gameRunning}
-              theme={props.theme}
-              gameOver={props.gameOver}
-            />
-          ))}
+          <div id="game" ref={game}>
+            <p onClick={handleClick} style={{ cursor: "pointer" }}>
+              {isLocked ? "Pause" : "Resume"}
+            </p>
+            {isLocked && (
+              <img
+                className="crosshair"
+                src={Crosshair}
+                alt="crosshair"
+                style={{
+                  top: `${position.y}px`,
+                  left: `${position.x}px`,
+                }}
+              ></img>
+            )}
+            {[...Array(targets)]?.map((_, idx) => (
+              <SingleTarget
+                key={idx}
+                targetSize={targetSize}
+                setScore={setScore}
+                gameRunning={gameRunning}
+                theme={theme}
+                gameOver={gameOver}
+                clickToHit={clickToHit}
+                position={position}
+                aimed={aimed}
+              />
+            ))}
+          </div>
         </>
       )}
     </div>

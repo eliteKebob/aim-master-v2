@@ -7,12 +7,12 @@
   font-family: 'Anybody', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden scroll;
   transition: background-color 0.2s ease-in-out;
 }
 
 body {
   background-color: #181818;
+  overflow: hidden scroll;
 }
 
 .flex-center-center {
@@ -52,7 +52,7 @@ h1 {
 }
 
 .set-size input,
-.set-target-amount input {
+.set-target-amount input, input[type="number"] {
   outline: none;
   border: none;
   border-radius: 1vh;
@@ -109,12 +109,18 @@ h1 {
 .game-wrapper {
   width: 100vw;
   height: 100vh;
+  position: absolute;
+  top: 0;
 }
 
 .scoreboard {
   height: 8vh;
   width: 100vw;
 }
+
+/* #game {
+  cursor: none;
+} */
 
 .score-count,
 .countdown,
@@ -145,11 +151,17 @@ h1 {
 
 .header-wrapper {
   width: 100vw;
-  height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #181818;
+  opacity: 1;
+  transition: 0.2s opacity ease-in-out;
+}
+
+.header-wrapper.passive {
+  opacity: 0;
+  z-index: -5;
 }
 
 .login-wrapper {
@@ -374,4 +386,32 @@ h1 {
   align-items: center;
   height: 100%;
   width: 50%;
+}
+
+.pause-menu-wrapper {
+  position: absolute;
+  width: 100vw;
+  height: 90vh;
+  background-color: #181818;
+  transition: opacity ease-in-out 0.2s;
+  top: 10vh;
+  overflow: hidden;
+}
+
+.pause-menu-wrapper.active {
+  opacity: 1;
+  z-index: 999;
+}
+
+.pause-menu-wrapper.passive {
+  opacity: 0;
+  z-index: -999;
+}
+ 
+.crosshair {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  width: 20px;
 }

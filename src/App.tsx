@@ -8,8 +8,9 @@ import { postScore } from "./requests/score";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { IAuthResponse } from "./types/auth.types";
 import { Themes } from "./constants/themes";
+import { GameModes } from "./constants/scores";
 
-function App() {
+const App = () => {
   const [score, setScore] = useState<number>(0);
   const [targetSize, setTargetSize] = useState<number>(3);
   const [targets, setTargets] = useState<number>(7);
@@ -17,9 +18,11 @@ function App() {
   const [gameRunning, setGameRunning] = useState<boolean>(false);
   const [isChallenge, setIsChallenge] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<number>(0);
+  const [sensitivity, setSensitivity] = useState<number>(1);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [user, setUser] = useState<IAuthResponse>({ access: "", refresh: "" });
   const [showMemberForm, setShowMemberForm] = useState<boolean>(false);
+  const [clickToHit, setClickToHit] = useState<boolean>(true);
 
   const root = document.getElementById("root");
   root && (root.style.color = theme);
@@ -46,13 +49,13 @@ function App() {
 
   useEffect(() => {
     if (!gameRunning && user) {
-      const chillGame = localStorage.getItem("chill");
+      const chillGame = localStorage.getItem(GameModes.Chill);
       if (chillGame) {
         const _request = async () => {
           await postScore(JSON.parse(chillGame));
         };
         _request();
-        localStorage.removeItem("chill");
+        localStorage.removeItem(GameModes.Chill);
       }
     }
     // eslint-disable-next-line
@@ -60,6 +63,16 @@ function App() {
 
   const isLoggedIn = (): boolean => {
     return user && user.access !== "" && user.refresh !== "";
+  };
+
+  const gameProps = {
+    theme: theme,
+    targets: targets,
+    targetSize: targetSize,
+    clickToHit: clickToHit,
+    sensitivity: sensitivity,
+    setGameRunning: setGameRunning,
+    setShowMemberForm: setShowMemberForm,
   };
 
   return (
@@ -72,23 +85,22 @@ function App() {
           setShowMemberForm={setShowMemberForm}
           setGameRunning={setGameRunning}
           isLoggedIn={isLoggedIn}
+          gameRunning={gameRunning}
         />
         <Routes>
           <Route
             path="/"
             element={
               <Landing
-                targetSize={targetSize}
                 setTargetSize={setTargetSize}
-                targets={targets}
                 setTargets={setTargets}
-                setGameRunning={setGameRunning}
-                theme={theme}
+                clearGameSession={clearGameSession}
                 setTheme={setTheme}
                 setIsChallenge={setIsChallenge}
-                clearGameSession={clearGameSession}
-                setShowMemberForm={setShowMemberForm}
                 isLoggedIn={isLoggedIn}
+                setClickToHit={setClickToHit}
+                setSensitivity={setSensitivity}
+                {...gameProps}
               />
             }
           />
@@ -98,18 +110,14 @@ function App() {
               <Game
                 score={score}
                 setScore={setScore}
-                targetSize={targetSize}
                 gameRunning={gameRunning}
-                setGameRunning={setGameRunning}
-                theme={theme}
-                targets={targets}
                 setStartTime={setStartTime}
                 startTime={startTime}
                 isChallenge={isChallenge}
                 gameOver={gameOver}
                 setGameOver={setGameOver}
-                setShowMemberForm={setShowMemberForm}
                 user={user}
+                {...gameProps}
               />
             }
           />
@@ -125,6 +133,6 @@ function App() {
       </BrowserRouter>
     </>
   );
-}
+};
 
 export default App;

@@ -9,7 +9,7 @@ export enum Themes {
   Crimson = "crimson",
   CornflowerBlue = "cornflowerblue",
   DarkSalmon = "darksalmon",
-  Indigo = "indigo",
+  BlueViolet = "blueviolet",
   PaleVioletRed = "palevioletred",
   Sienna = "sienna",
   Teal = "teal",
