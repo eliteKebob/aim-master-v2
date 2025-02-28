@@ -1,3 +1,4 @@
+import { SCORES } from "../constants/scores";
 import { IScoreRequest } from "../types/score.types";
 
 export const saveLocalSession = ({
@@ -19,4 +20,12 @@ export const saveLocalSession = ({
       mode: mode,
     })
   );
+};
+
+export const gradeGetter = (num: number) => {
+  for (const score of SCORES) {
+    if (num >= score.min && num <= score.max) {
+      return score;
+    }
+  }
 };

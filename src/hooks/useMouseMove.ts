@@ -34,8 +34,10 @@ const useMouseMove = ({ sensitivity, clickToHit, gameRunning }: IMouseMove) => {
         });
       }
     };
+
     document.addEventListener("mousemove", handleMouseMove);
     clickToHit && document.addEventListener("mousedown", handleAim);
+    
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       handleMouseMove.cancel();

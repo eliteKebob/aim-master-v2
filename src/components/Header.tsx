@@ -82,7 +82,11 @@ const Header = ({
     >
       <div
         className="header flex-center-center"
-        style={{ backgroundColor: theme }}
+        style={{
+          backgroundColor: theme,
+          background: `linear-gradient(90deg,rgb(255 255 255/50%),rgb(0 0 0/50%)),
+          ${theme}`,
+        }}
       >
         <div
           className="brand flex-center-center"

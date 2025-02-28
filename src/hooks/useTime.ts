@@ -6,7 +6,7 @@ import {
 } from "../constants/date";
 import { IStoppage, ITime } from "../types/component.types";
 
-const defaultPauseTime: IStoppage = {
+const defaultStoppage: IStoppage = {
   start: 0,
   end: 0,
   total: 0,
@@ -15,7 +15,7 @@ const defaultPauseTime: IStoppage = {
 const useTime = ({ gameOver, gameRunning, isChallenge, startTime }: ITime) => {
   const [now, setNow] = useState<number>(0);
   const [secs, setSecs] = useState<number>(SECONDS_PER_GAME);
-  const [stoppage, setStoppage] = useState<IStoppage>(defaultPauseTime);
+  const [stoppage, setStoppage] = useState<IStoppage>(defaultStoppage);
 
   const clearMe = setInterval(() => {
     if (!gameOver) {
@@ -25,9 +25,9 @@ const useTime = ({ gameOver, gameRunning, isChallenge, startTime }: ITime) => {
   }, MILLISECONDS_PER_SECOND); // make this value as performance setting
 
   useEffect(() => {
-    if (gameRunning) {
+    if (gameRunning && !gameOver) {
       if (isChallenge) {
-        const threshold = startTime + MILLISECONDS_PER_GAME;
+        const threshold = startTime + stoppage.total + MILLISECONDS_PER_GAME;
         const distance = threshold - now;
         if (threshold !== distance) {
           const current = distance % MILLISECONDS_PER_GAME;
@@ -36,16 +36,16 @@ const useTime = ({ gameOver, gameRunning, isChallenge, startTime }: ITime) => {
       } else {
         const total = now - startTime - stoppage.total;
         setSecs(Math.floor(total / MILLISECONDS_PER_SECOND));
-        if (stoppage.start !== 0) {
-          setStoppage((prev) => {
-            const paused = {
-              start: 0,
-              end: 0,
-              total: prev.total + (prev.end - prev.start),
-            };
-            return paused;
-          });
-        }
+      }
+      if (stoppage.start !== 0) {
+        setStoppage((prev) => {
+          const paused = {
+            start: 0,
+            end: 0,
+            total: prev.total + (prev.end - prev.start),
+          };
+          return paused;
+        });
       }
     } else {
       setStoppage((prev) => {
@@ -60,7 +60,7 @@ const useTime = ({ gameOver, gameRunning, isChallenge, startTime }: ITime) => {
     // eslint-disable-next-line
   }, [now]);
   
-  return [now, secs, setSecs] as const;
+  return [now, secs, stoppage, setSecs] as const;
 };
 
 export default useTime;

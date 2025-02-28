@@ -50,6 +50,7 @@ export interface IGameOver extends WithTheme, WithGameState, Target {
   score: number;
   setScore: SetState<number>;
   setStartTime: SetState<number>;
+  start: () => void;
 }
 
 export interface IHeader extends WithTheme, WithAuth, WithGameState {
@@ -147,7 +148,9 @@ export interface ISpm {
   secs: number;
 }
 
-export interface IPointerLock extends WithGameState {}
+export interface IPointerLock extends WithGameState {
+  start: () => void;
+}
 
 export interface ICustomizeMouse extends WithTheme {
   setSensitivity: SetState<number>;
@@ -158,5 +161,6 @@ export interface ICustomizeMouse extends WithTheme {
 
 export interface IPauseMenu extends WithTheme {
   gameRunning: boolean;
+  gameOver: boolean;
   resumeFn: () => void;
 }

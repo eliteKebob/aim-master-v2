@@ -1,17 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { IPointerLock } from "../types/component.types";
 
-const usePointerLock = ({ setGameRunning }: IPointerLock) => {
+const usePointerLock = ({ setGameRunning, start }: IPointerLock) => {
   const game = useRef<HTMLDivElement>(null);
 
   const [isLocked, setIsLocked] = useState<boolean>(false);
 
   useEffect(() => {
-    if (game?.current) {
-      game.current.requestPointerLock({
-        unadjustedMovement: true,
-      });
-    }
+    start();
     const handleLockChange = () => {
       setIsLocked(document.pointerLockElement === game?.current);
       setGameRunning(document.pointerLockElement === game?.current);

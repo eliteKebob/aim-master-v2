@@ -12,9 +12,9 @@ export const getTimezoneOffset = (): number => {
   return -(new Date().getTimezoneOffset() / SECONDS_PER_MINUTE);
 };
 
-export const _scroll = (px: number) => {
+export const _scroll = (px: number, isVh=false) => {
   window.scrollTo({
-    top: px,
+    top: isVh ? vhToPixels(10) : px,
     behavior: "smooth",
   });
 };

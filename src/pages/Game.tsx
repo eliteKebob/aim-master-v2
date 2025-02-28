@@ -10,9 +10,9 @@ import PauseMenu from "../components/PauseMenu";
 import Crosshair from "../assets/crosshair.png";
 import { getTimezoneOffset, vhToPixels, vwToPixels } from "../utils/util";
 import { saveLocalSession } from "../helpers/game";
-import useMouseMove from "../hooks/useMouseMove";
-import useTime from "../hooks/useTime";
 import useSpm from "../hooks/useSpm";
+import useTime from "../hooks/useTime";
+import useMouseMove from "../hooks/useMouseMove";
 import usePointerLock from "../hooks/usePointerLock";
 
 const Game = ({
@@ -38,10 +38,10 @@ const Game = ({
   const [aimed, position, setPosition] = useMouseMove({
     sensitivity: sensitivity,
     clickToHit: clickToHit,
-    gameRunning: gameRunning
+    gameRunning: gameRunning,
   });
 
-  const [now, secs, setSecs] = useTime({
+  const [now, secs, stoppage, setSecs] = useTime({
     gameOver: gameOver,
     startTime: startTime,
     isChallenge: isChallenge,
@@ -49,13 +49,28 @@ const Game = ({
   });
 
   const [spm, setSpm] = useSpm({
-    isChallenge: isChallenge,
-    score: score,
     secs: secs,
+    score: score,
+    isChallenge: isChallenge,
   });
+
+  const start = () => {
+    if (game?.current) {
+      setGameRunning(true);
+      // centering crosshair
+      setPosition((prev) => ({
+        x: prev.x !== 0 ? prev.x : vwToPixels(50),
+        y: prev.y !== 0 ? prev.y : vhToPixels(50),
+      }));
+      game.current.requestPointerLock({
+        unadjustedMovement: true,
+      });
+    }
+  };
 
   const [isLocked, game] = usePointerLock({
     setGameRunning: setGameRunning,
+    start: start,
   });
 
   useEffect(() => {
@@ -86,8 +101,9 @@ const Game = ({
 
   useEffect(() => {
     if (isChallenge) {
-      if (now - startTime > MILLISECONDS_PER_GAME) {
+      if (now - startTime > MILLISECONDS_PER_GAME + stoppage.total) {
         setGameOver(true);
+        setGameRunning(false);
       }
     }
     // eslint-disable-next-line
@@ -98,21 +114,18 @@ const Game = ({
       document.exitPointerLock();
       setGameRunning(false);
     } else if (game?.current) {
-      // centering crosshair
-      setPosition((prev) => ({
-        x: prev.x !== 0 ? prev.x : vwToPixels(50),
-        y: prev.y !== 0 ? prev.y : vhToPixels(50),
-      }));
-      game.current.requestPointerLock({
-        unadjustedMovement: true,
-      });
-      setGameRunning(true);
+      start();
     }
   };
 
   return (
     <div className="game-wrapper" id="game-table">
-      <PauseMenu theme={theme} gameRunning={gameRunning} resumeFn={handleContinue} />
+      <PauseMenu
+        theme={theme}
+        gameRunning={gameRunning}
+        resumeFn={handleContinue}
+        gameOver={gameOver}
+      />
       <Scoreboard
         score={score}
         secs={secs}
@@ -125,6 +138,7 @@ const Game = ({
         <GameOver
           score={score}
           theme={theme}
+          start={start}
           targets={targets}
           targetSize={targetSize}
           gameLength={SECONDS_PER_GAME}

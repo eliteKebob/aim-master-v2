@@ -4,6 +4,8 @@ import CustomizeTargets from "../components/CustomizeTargets";
 import StartGame from "../components/StartGame";
 import { ILanding } from "../types/component.types";
 import CustomizeMouse from "../components/CustomizeMouse";
+import { _scroll } from "../utils/util";
+import { HEADER_HEIGHT } from "../constants/style";
 
 const Landing = ({
   targetSize,
@@ -29,7 +31,11 @@ const Landing = ({
 
   return (
     <div className="landing flex-center-center">
-      <h1>Customize Your Game</h1>
+      <h1
+        onClick={() => _scroll(HEADER_HEIGHT.numeric, true)}
+      >
+        Customize Your Game
+      </h1>
       <CustomizeTargets
         targetSize={targetSize}
         targets={targets}

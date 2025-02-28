@@ -10,26 +10,29 @@ import { useEffect, useState, createRef, useRef } from "react";
 import Logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import autoAnimate from "@formkit/auto-animate";
-import { GameModes, SCORES } from "../constants/scores";
+import { GameModes } from "../constants/scores";
 import { postScore } from "../requests/score";
 import { IGrade } from "../types/score.types";
+// TODO: replace deprecated package 
 // @ts-expect-error
 import { useScreenshot } from "use-react-screenshot";
 import { SECONDS_PER_MINUTE } from "../constants/date";
 import { IGameOver } from "../types/component.types";
 import { getTimezoneOffset } from "../utils/util";
+import { gradeGetter } from "../helpers/game";
 
-const genericGrade = {
+const genericGrade : IGrade = {
   name: "Generic Grade",
   message: "Generic Grade Message",
 };
 
 const GameOver = ({
   score,
+  theme,
   targetSize,
   targets,
-  theme,
   gameLength,
+  start,
   setGameOver,
   setGameRunning,
   setScore,
@@ -59,7 +62,8 @@ const GameOver = ({
 
   const handleRetry = () => {
     clear();
-    setStartTime(new Date().getTime());
+    start();
+    setStartTime(Date.now());
   };
 
   const handleHome = () => {
@@ -70,21 +74,13 @@ const GameOver = ({
   };
 
   useEffect(() => {
-    parentRef.current && autoAnimate(parentRef.current);
+    parentRef?.current && autoAnimate(parentRef.current);
   }, [parentRef]);
 
-  const gradeGetter = (num: number) => {
-    for (const score of SCORES) {
-      if (num >= score.min && num <= score.max) {
-        return score;
-      }
-    }
-  };
-
   useEffect(() => {
-    const finalResult =
+    const result =
       (score * (SECONDS_PER_MINUTE / gameLength)) / (targets + targetSize);
-    const grade = gradeGetter(Math.round(finalResult)) as IGrade;
+    const grade = gradeGetter(Math.round(result)) as IGrade;
 
     setGrade(grade);
 
@@ -192,7 +188,7 @@ const GameOver = ({
             onClick={getImage}
           >
             {" "}
-            <FaFileDownload /> Download Screenshot
+            <FaFileDownload /> Screenshot
             {image && (
               <a
                 ref={downloadRef}
