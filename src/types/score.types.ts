@@ -8,6 +8,8 @@ export interface IScoreRequest {
   total_target: number;
   target_hit: number;
   mode: GameModes;
+  sensitivity: number;
+  is_click: boolean;
 }
 
 export interface IScoreResponse {
