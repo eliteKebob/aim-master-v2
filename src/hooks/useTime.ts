@@ -59,7 +59,13 @@ const useTime = ({ gameOver, gameRunning, isChallenge, startTime }: ITime) => {
     }
     // eslint-disable-next-line
   }, [now]);
-  
+
+  useEffect(() => {
+    if (gameOver) {
+      setStoppage(defaultStoppage);
+    }
+  }, [gameOver]);
+
   return [now, secs, stoppage, setSecs] as const;
 };
 

@@ -51,6 +51,8 @@ export interface IGameOver extends WithTheme, WithGameState, Target {
   setScore: SetState<number>;
   setStartTime: SetState<number>;
   start: () => void;
+  sensitivity: number;
+  clickToHit: boolean;
 }
 
 export interface IHeader extends WithTheme, WithAuth, WithGameState {
@@ -133,6 +135,7 @@ export interface IMouseMove {
   sensitivity: number;
   clickToHit: boolean;
   gameRunning: boolean;
+  gameOver: boolean;
 }
 
 export interface ITime {
@@ -150,6 +153,7 @@ export interface ISpm {
 
 export interface IPointerLock extends WithGameState {
   start: () => void;
+  gameOver: boolean;
 }
 
 export interface ICustomizeMouse extends WithTheme {

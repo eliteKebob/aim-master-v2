@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { MILLISECONDS_PER_GAME, SECONDS_PER_GAME } from "../constants/date";
 import { GameModes } from "../constants/scores";
 import { IGame } from "../types/component.types";
-import SingleTarget from "../components/SingleTarget";
-import GameOver from "../components/GameOver";
-import Scoreboard from "../components/Scoreboard";
-import PauseMenu from "../components/PauseMenu";
+import SingleTarget from "../components/game/SingleTarget";
+import GameOver from "../components/game/GameOver";
+import Scoreboard from "../components/game/Scoreboard";
+import PauseMenu from "../components/game/PauseMenu";
 import Crosshair from "../assets/crosshair.png";
 import { getTimezoneOffset, vhToPixels, vwToPixels } from "../utils/util";
 import { saveLocalSession } from "../helpers/game";
@@ -39,6 +39,7 @@ const Game = ({
     sensitivity: sensitivity,
     clickToHit: clickToHit,
     gameRunning: gameRunning,
+    gameOver: gameOver,
   });
 
   const [now, secs, stoppage, setSecs] = useTime({
@@ -54,14 +55,17 @@ const Game = ({
     isChallenge: isChallenge,
   });
 
-  const start = () => {
+  const start = (initial=false) => {
     if (game?.current) {
       setGameRunning(true);
       // centering crosshair
-      setPosition((prev) => ({
-        x: prev.x !== 0 ? prev.x : vwToPixels(50),
-        y: prev.y !== 0 ? prev.y : vhToPixels(50),
-      }));
+      setPosition((prev) => {
+        const coords = {
+          x: (prev.x !== 0 && !initial) ? prev.x : vwToPixels(50),
+          y: (prev.y !== 0 && !initial) ? prev.y : vhToPixels(50),
+        };
+        return coords;
+      });
       game.current.requestPointerLock({
         unadjustedMovement: true,
       });
@@ -71,6 +75,7 @@ const Game = ({
   const [isLocked, game] = usePointerLock({
     setGameRunning: setGameRunning,
     start: start,
+    gameOver: gameOver
   });
 
   useEffect(() => {
@@ -94,6 +99,8 @@ const Game = ({
         target_size: targetSize,
         total_target: targets,
         target_hit: score,
+        sensitivity: sensitivity,
+        is_click: clickToHit,
       });
     }
     // eslint-disable-next-line
@@ -108,6 +115,14 @@ const Game = ({
     }
     // eslint-disable-next-line
   }, [secs]);
+
+  useEffect(() => {
+    if (isLocked && gameRunning && !gameOver) {
+      start(true);
+    }
+    // eslint-disable-next-line
+  }, [gameOver]);
+  
 
   const handleContinue = () => {
     if (isLocked) {
@@ -142,6 +157,8 @@ const Game = ({
           targets={targets}
           targetSize={targetSize}
           gameLength={SECONDS_PER_GAME}
+          sensitivity={sensitivity}
+          clickToHit={clickToHit}
           setSpm={setSpm}
           setSecs={setSecs}
           setScore={setScore}

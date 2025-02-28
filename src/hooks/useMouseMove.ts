@@ -7,14 +7,19 @@ const defaultCoordinates: IMouseCoordinates = {
   y: 0,
 };
 
-const useMouseMove = ({ sensitivity, clickToHit, gameRunning }: IMouseMove) => {
+const useMouseMove = ({
+  sensitivity,
+  clickToHit,
+  gameRunning,
+  gameOver,
+}: IMouseMove) => {
   const [aimed, setAimed] = useState<IMouseCoordinates>(defaultCoordinates);
   const [position, setPosition] =
     useState<IMouseCoordinates>(defaultCoordinates);
 
   useEffect(() => {
     const handleMouseMove = throttle((e: MouseEvent) => {
-      if (gameRunning) {
+      if (gameRunning && !gameOver) {
         setPosition((prev) => {
           const coordinates = {
             x: prev.x + e.movementX * sensitivity,
@@ -26,7 +31,7 @@ const useMouseMove = ({ sensitivity, clickToHit, gameRunning }: IMouseMove) => {
     }, 1); // make this 1 value as performance setting
 
     const handleAim = (e: MouseEvent) => {
-      if (gameRunning) {
+      if (gameRunning && !gameOver) {
         setPosition((prev) => {
           const coordinates = { x: prev.x, y: prev.y };
           setAimed(coordinates);
@@ -37,7 +42,7 @@ const useMouseMove = ({ sensitivity, clickToHit, gameRunning }: IMouseMove) => {
 
     document.addEventListener("mousemove", handleMouseMove);
     clickToHit && document.addEventListener("mousedown", handleAim);
-    
+
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       handleMouseMove.cancel();
@@ -45,6 +50,13 @@ const useMouseMove = ({ sensitivity, clickToHit, gameRunning }: IMouseMove) => {
     };
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (gameOver) {
+      setAimed(defaultCoordinates);
+      setPosition(defaultCoordinates);
+    }
+  }, [gameOver]);
 
   return [aimed, position, setPosition] as const;
 };

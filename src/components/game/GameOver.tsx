@@ -7,19 +7,19 @@ import {
   FaCog,
 } from "react-icons/fa";
 import { useEffect, useState, createRef, useRef } from "react";
-import Logo from "../assets/logo.png";
+import Logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import autoAnimate from "@formkit/auto-animate";
-import { GameModes } from "../constants/scores";
-import { postScore } from "../requests/score";
-import { IGrade } from "../types/score.types";
+import { GameModes } from "../../constants/scores";
+import { postScore } from "../../requests/score";
+import { IGrade } from "../../types/score.types";
 // TODO: replace deprecated package 
 // @ts-expect-error
 import { useScreenshot } from "use-react-screenshot";
-import { SECONDS_PER_MINUTE } from "../constants/date";
-import { IGameOver } from "../types/component.types";
-import { getTimezoneOffset } from "../utils/util";
-import { gradeGetter } from "../helpers/game";
+import { SECONDS_PER_MINUTE } from "../../constants/date";
+import { IGameOver } from "../../types/component.types";
+import { getTimezoneOffset } from "../../utils/util";
+import { gradeGetter } from "../../helpers/game";
 
 const genericGrade : IGrade = {
   name: "Generic Grade",
@@ -32,6 +32,8 @@ const GameOver = ({
   targetSize,
   targets,
   gameLength,
+  clickToHit,
+  sensitivity,
   start,
   setGameOver,
   setGameRunning,
@@ -62,8 +64,8 @@ const GameOver = ({
 
   const handleRetry = () => {
     clear();
-    start();
     setStartTime(Date.now());
+    // start();
   };
 
   const handleHome = () => {
@@ -92,6 +94,8 @@ const GameOver = ({
         total_target: targets,
         target_hit: score,
         mode: GameModes.Challenge,
+        sensitivity: sensitivity,
+        is_click: clickToHit,
       });
     };
     _request();

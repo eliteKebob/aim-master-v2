@@ -1,4 +1,4 @@
-import { IPauseMenu } from "../types/component.types";
+import { IPauseMenu } from "../../types/component.types";
 
 const PauseMenu = ({ gameRunning, theme, gameOver, resumeFn }: IPauseMenu) => {
 

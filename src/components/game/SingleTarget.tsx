@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ISingleTarget } from "../types/component.types";
-import { calculateTopRight } from "../utils/formulas";
+import { ISingleTarget } from "../../types/component.types";
+import { calculateTopRight } from "../../utils/formulas";
 
 const SingleTarget = ({
   targetSize,
@@ -41,7 +41,7 @@ const SingleTarget = ({
   };
 
   useEffect(() => {
-    if (gameRunning) {
+    if (gameRunning && !gameOver) {
       stylist();
     }
     // eslint-disable-next-line
@@ -97,7 +97,6 @@ const SingleTarget = ({
         width: `${targetSize}vh`,
         height: `${targetSize}vh`,
         backgroundColor: theme,
-        zIndex: "5",
       }}
     ></div>
   );

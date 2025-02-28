@@ -1,6 +1,6 @@
 import { FaCrosshairs, FaClock, FaFireAlt } from "react-icons/fa";
-import { SECONDS_PER_GAME } from "../constants/date";
-import { IScoreboard } from "../types/component.types";
+import { SECONDS_PER_GAME } from "../../constants/date";
+import { IScoreboard } from "../../types/component.types";
 
 const Scoreboard = ({ secs, isChallenge, theme, score, spm, gameRunning }: IScoreboard) => {
   const determineSecondsToRender = (): number => {

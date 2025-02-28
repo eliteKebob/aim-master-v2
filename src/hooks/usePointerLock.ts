@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { IPointerLock } from "../types/component.types";
 
-const usePointerLock = ({ setGameRunning, start }: IPointerLock) => {
+const usePointerLock = ({ setGameRunning, start, gameOver }: IPointerLock) => {
   const game = useRef<HTMLDivElement>(null);
 
   const [isLocked, setIsLocked] = useState<boolean>(false);
@@ -18,6 +18,12 @@ const usePointerLock = ({ setGameRunning, start }: IPointerLock) => {
     };
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (gameOver) {
+      setIsLocked(false);
+    }
+  }, [gameOver]);
 
   return [isLocked, game] as const;
 };
