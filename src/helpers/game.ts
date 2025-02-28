@@ -8,6 +8,8 @@ export const saveLocalSession = ({
   target_hit,
   tz_offset,
   mode,
+  sensitivity,
+  is_click
 }: IScoreRequest) => {
   localStorage.setItem(
     mode,
@@ -18,6 +20,8 @@ export const saveLocalSession = ({
       total_target: total_target,
       target_hit: target_hit,
       mode: mode,
+      sensitivity: sensitivity,
+      is_click: is_click
     })
   );
 };
